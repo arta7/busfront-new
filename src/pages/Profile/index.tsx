@@ -728,6 +728,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
+   const isRTL = ['fa', 'ar', 'pa'].includes(i18n.language);
 
   const stateArray = {
     email: userData[0]?.email || "",
@@ -773,8 +774,8 @@ const ProfilePage = () => {
 
     } catch (error) {
       console.error('Error fetching profile data:', error);
-      alert(
-         t('profileUpdateError'));
+      // alert(
+      //    t('profileUpdateError'));
     } finally {
       setIsFetching(false);
     }
@@ -955,14 +956,14 @@ const ProfilePage = () => {
           </Box>
 
           {modalContent === 2 ? (
-            <Box>
+             <Box dir={isRTL ? 'rtl' : 'ltr' } >
               <Typography variant="h6" color="primary" textAlign="center" mb={2}>
                 {t('profile.changeEmail')}
               </Typography>
               <TextField
                 fullWidth
                 variant="outlined"
-                label={t('emailPlaceholder')}
+                // label={t('emailPlaceholder')}
                 value={state.email}
                 onChange={(e) => setState({ ...state, email: e.target.value })}
                 margin="normal"
@@ -994,31 +995,32 @@ const ProfilePage = () => {
               </Box>
             </Box>
           ) : modalContent === 5 ? (
-            <Box>
+            <Box dir={isRTL ? 'rtl' : 'ltr' } >
               <Typography variant="h6" color="primary" textAlign="center" mb={2}>
                 {t('profile.changeName')}
               </Typography>
               <TextField
                 fullWidth
                 variant="outlined"
-                label={t('namePlaceholder')}
+                // label={t('namePlaceholder')}
                 value={state.firstName}
                 onChange={(e) => setState({ ...state, firstName: e.target.value })}
                 margin="normal"
               />
             </Box>
           ) : modalContent === 6 ? (
-            <Box>
+            <Box dir={isRTL ? 'rtl' : 'ltr' } >
               <Typography variant="h6" color="primary" textAlign="center" mb={2}>
                 {t('profile.changeLastName')}
               </Typography>
               <TextField
                 fullWidth
                 variant="outlined"
-                label={t('lastNamePlaceholder')}
+                // label={t('lastNamePlaceholder')}
                 value={state.lastName}
                 onChange={(e) => setState({ ...state, lastName: e.target.value })}
                 margin="normal"
+                
               />
             </Box>
           ) : null}
@@ -1030,7 +1032,7 @@ const ProfilePage = () => {
                 color="primary"
                 onClick={() => setModalVisible(false)}
               >
-                {t('cancel')}
+                {t('profile.cancel')}
               </Button>
               <Button
                 variant="contained"

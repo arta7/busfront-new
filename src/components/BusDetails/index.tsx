@@ -2760,6 +2760,7 @@ const BusDetails = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { userData } = React.useContext(UserContext);
   const navigate = useNavigate();
+   const isRTL = ['fa', 'ar', 'pa'].includes(i18n.language);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [Loading, setLoading] = useState(true);
@@ -2846,7 +2847,7 @@ const BusDetails = ({
 
   const renderPerson = (item, index) => {
     const itemErrors = errors.items?.[index];
-    const isRTL = ['fa', 'ar', 'pa'].includes(i18n.language);
+   
 
     return (
       <Box key={index} sx={{
@@ -3066,7 +3067,7 @@ const BusDetails = ({
               control={control}
               render={({ field }) => (
                 <ReactInputMask
-                  mask={isRTL ? '1399/99/99' : '9999/99/99'}
+                  mask={isRTL ? '9999/99/99' : '9999/99/99'}
                   placeholder={isRTL ? '1371/02/19' : '1992/05/10'}
                   value={field.value || ''}
                   onChange={(e) => {
@@ -3262,12 +3263,13 @@ const BusDetails = ({
         onClose={() => setTermsModalOpen(false)}
         fullWidth
         maxWidth="md"
+        dir={isRTL ? 'rtl' : 'ltr'}
       >
         <DialogTitle sx={{ fontFamily: theme.typography.fontFamily }}>
           {t('terms1.title')}
         </DialogTitle>
         <DialogContent dividers>
-          <Typography sx={{ fontFamily: theme.typography.fontFamily }}>
+          <Typography sx={{ fontFamily: theme.typography.fontFamily }} style={{ whiteSpace: "pre-line" }}>
             {t('terms1.content')}
           </Typography>
         </DialogContent>

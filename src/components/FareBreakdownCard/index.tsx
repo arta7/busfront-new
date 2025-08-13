@@ -101,6 +101,11 @@ export default function FareBreakdownCard({ price, counts, totalPrice }) {
   const { t, i18n } = useTranslation();
   const theme = getTheme(i18n.language);
 
+
+  const formatPrice = (price) => {
+    if (!price) return '0';
+    return new Intl.NumberFormat(i18n.language === 'fa' ? 'fa-IR' : 'en-US').format(price);
+  };
   return (
     <FareBreakdown>
       <Box
@@ -115,7 +120,7 @@ export default function FareBreakdownCard({ price, counts, totalPrice }) {
         </Typography>
         <Box sx={{ display: 'flex', gap: '2px' }}>
           <Typography variant="h7" color={theme.palette.secondary.main} fontFamily={theme.typography.fontFamily}>
-            {price}
+            {formatPrice(price)}
           </Typography>
           <Typography>{t('fareBreakdown.rial')}</Typography> {/* Translated Text */}
         </Box>
@@ -149,7 +154,7 @@ export default function FareBreakdownCard({ price, counts, totalPrice }) {
         </Typography>
         <Box sx={{ display: 'flex', gap: '2px' }}>
           <Typography fontWeight={600}>
-            {price * counts}
+            {formatPrice(price * counts)}
           </Typography>
           <Typography variant="h7" color={theme.palette.secondary.main} fontFamily={theme.typography.fontFamily}>
             {t('fareBreakdown.rial')} {/* Translated Text */}
