@@ -823,8 +823,8 @@ const ProfilePage = () => {
       await updateProfile(formData);
       await fetchProfileData();
 
-        alert(
-         t('profileUpdateSuccess'));
+        // alert(
+        //  t('profileUpdateSuccess'));
 
       setModalVisible(false);
     } catch (error) {

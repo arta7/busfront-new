@@ -15,13 +15,13 @@ import Demopage from './pages/DemoPage/demopage';
 import UserProtectedRoute from './components/ProtectedRoutes';
 import { Toaster } from 'react-hot-toast';
 import AdminDashBoard from './pages/AdminDashBoard';
-import ProfilePage from './pages/Profile';
+import ProfilePage from './pages/Profile/profilePage';
 import AdminProtectedRoute from './components/AdminProtectedRoutes';
 import AdminSchedule from './pages/AdminSchedule';
 import NotFoundPage from './pages/NotFoundPage';
 import PricingPage from './pages/PricingPage/PricingPage';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
-import TermsAndConditions from './pages/TermsAndconditions/TermsAndConditions';
+import TermsAndConditions from './pages/TermsAndconditions/TermsPage';
 import RefundPolicy from './pages/RefundPolicy/RefundPolicy';
 import ContactUs from './pages/ContactUs/contactUs.tsx';
 import AboutUs from './pages/AboutUs/AboutUs';
@@ -40,6 +40,16 @@ import PaymentSuccessPage from './pages/Home/PaymentSuccessPage.tsx';
 import PaymentCancelPage from './pages/Home/PaymentCancelPage.tsx';
 import BusTicketsList from './pages/BusList/BusTicketsList.tsx';
 import TicketDetail from './pages/BusList/TicketDetail.tsx';
+import WishlistPage from './pages/Profile/WishlistPage.tsx';
+import ProfileTransactionsPage from './pages/Profile/ProfileTransactionsPage.tsx';
+import ProfileTicketingPage from './pages/Profile/ProfileTicketingPage.tsx';
+import ProfilePassengersPage from './pages/Profile/ProfilePassengersPage.tsx';
+import ProfileOrdersPage from './pages/Profile/ProfileOrdersPage.tsx';
+import OrderDetailsPage from './pages/Profile/OrderDetailsPage.tsx';
+import OrderPage from './pages/Profile/orderpage.tsx';
+import TicketIssuancePage from './pages/Tickets/TicketIssuancePage.tsx';
+import RefundSelectionPage from './pages/Tickets/RefundSelectionPage.tsx';
+import OrderConfirmationPage from './pages/Tickets/OrderConfirmationPage.tsx';
 
 // Create RTL cache
 const cacheRtl = createCache({
@@ -121,7 +131,9 @@ useEffect(() => {
                 <ValidateAuth />
                 <CssBaseline />
                 <Box margin={{ xs: '0.5rem', md: '1rem 1rem' }}>
-                  {showNavbarAndFooter && <Navbar />}
+                  {
+                  //showNavbarAndFooter &&
+                   <Navbar />}
                   <Routes>
                     <Route path="/Logins" element={<Logins />} />
                     <Route path="/" element={<Home />} />
@@ -175,6 +187,96 @@ useEffect(() => {
                       element={
                         <UserProtectedRoute>
                           <ProfilePage />
+                        </UserProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/profile-wishlist"
+                      element={
+                        <UserProtectedRoute>
+                          <WishlistPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+                     <Route
+                      path="/ProfileTransactionsPage"
+                      element={
+                        <UserProtectedRoute>
+                          <ProfileTransactionsPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+
+                     <Route
+                      path="/profile-orders"
+                      element={
+                        <UserProtectedRoute>
+                          <ProfileOrdersPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+                     <Route
+                      path="/OrderPage"
+                      element={
+                        <UserProtectedRoute>
+                          <OrderPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+                     <Route
+                      path="/TicketIssuancePage"
+                      element={
+                        <UserProtectedRoute>
+                          <TicketIssuancePage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+                     <Route
+                      path="/RefundSelectionPage"
+                      element={
+                        <UserProtectedRoute>
+                          <RefundSelectionPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+
+                      <Route
+                      path="/OrderConfirmationPage"
+                      element={
+                        <UserProtectedRoute>
+                          <OrderConfirmationPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/OrderDetailsPage"
+                      element={
+                        <UserProtectedRoute>
+                          <OrderDetailsPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+                      <Route
+                      path="/ProfileTicketingPage"
+                      element={
+                        <UserProtectedRoute>
+                          <ProfileTicketingPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+
+                       <Route
+                      path="/profile-passengers"
+                      element={
+                        <UserProtectedRoute>
+                          <ProfilePassengersPage />
                         </UserProtectedRoute>
                       }
                     />

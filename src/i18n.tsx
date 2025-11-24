@@ -190,7 +190,7 @@ i18n.use(initReactI18next).init({
           support: "Support",
           refundPolicy: "Refund Policy",
           contactUs: "Contact Us",
-          copyright: " kalanholding.com - Website designed by ",
+          copyright: " partoseir.com - Website designed by ",
           logoAlt: "College logo",
           frameAlt: "College frame"
         },
@@ -335,6 +335,11 @@ i18n.use(initReactI18next).init({
     "select": "Select",
     "continue": "Continue",
     "submit": "Submit"
+  },
+  notfound:{
+     title: 'Coming Soon',
+      description: 'Please wait for this page to be launched',
+      button: 'Go to home'
   }
        
 
@@ -346,6 +351,497 @@ i18n.use(initReactI18next).init({
     },
     fa: {
       translation: {
+        homepage:{
+  "home": {
+    "title": "پرتو سیر | صفحه اصلی",
+    "booking": {
+      "oneWay": "یک طرفه",
+      "roundTrip": "دو طرفه",
+      "origin": "مبدا (شهر)",
+      "destination": "مقصد (شهر)",
+      "departureDate": "تاریخ رفت",
+      "returnDate": "تاریخ برگشت",
+      "passengers": "مسافر",
+      "search": "جستجو",
+      "adult": "بزرگسال",
+      "adultDesc": "(۱۲ سال به بالا)",
+      "child": "کودک",
+      "childDesc": "(۲ تا ۱۲ سال)",
+      "infant": "نوزاد",
+      "infantDesc": "(۱۰ روز تا ۲ سال)",
+      "increase": "تعداد را افزایش دهید",
+      "decrease": "تعداد را کاهش دهید"
+    },
+    "services": {
+      "bus": "اتوبوس",
+      "taxi": "تاکسی",
+      "van": "ون",
+      "cargo": "باربری"
+    },
+    "news": "اخبار",
+    "popularRoutes": "مسیر های پرمخاطب",
+    "from": "مبدا",
+    "to": "مقصد",
+    "startingPrice": "شروع قیمت از",
+    "phoneBooking": "خرید تلفنی",
+    "travelLimit": "سفر، تنها محدود به آرزوهای توست!",
+    "moreInfo": " اطلاعات بیشتر",
+    "downloadApp": "برنامه پرتو سیر رو دانلود کن",
+    "travelEasier": "سفرت رو راحت‌تر کن",
+    "downloadAndroid": "دانلود نسخه اندروید",
+    "downloadIOS": "دانلود اپل",
+    "directDownload": "دانلود مستقیم",
+    "webApp": "وب اپلیکیشن",
+    "scanDownload": "اسکن کنید و دانلود کنید!",
+    "faq": "پرسش های متداول",
+    "highlights": {
+      "anywhere": "هرجا که بخوای، با هر بودجه‌ای",
+      "anywhereDesc": "رزرو آنلاین انواع بلیط اتوبوس، تاکسی و ون",
+      "alwaysAvailable": "هر لحظه در دسترس، همیشه همراه",
+      "alwaysAvailableDesc": "فقط یه کلیک تا مقصدت فاصله داری",
+      "worryFree": "از درِ خونه تا مقصد، بی‌دغدغه",
+      "worryFreeDesc": "آسایش شما، هدف ماست"
+    },
+    "readyToTravel": "چمدونت برای سفر آمادست؟",
+    "readyToTravelDesc": "چمدونت آماده‌ست، بلیتت چی؟ با رزرو آنلاین، از بهترین قیمت‌ها و صندلی‌ها بهره‌مند شو. علاوه بر این، می‌تونی با خیال راحت، جزئیات سفرت رو مدیریت کنی.",
+    "onlineOrder": "سفارش آنلاین"
+  },
+  "cities": {
+    "tehran": "تهران",
+    "ahvaz": "اهواز",
+    "shiraz": "شیراز",
+    "mashhad": "مشهد",
+    "bandar": "بندر عباس",
+    "esfehan": "اصفهان",
+    "tabriz": "تبریز",
+    "kish": "جزیره کیش"
+  }
+},
+newprofile:{
+  "profile": {
+    "title": "پرتو سیر | پروفایل",
+    "pageTitle": "پروفایل کاربری",
+    "userMenu": "منو کاربری",
+    "verified": "تایید شده",
+    "accountBalance": "موجودی حساب",
+    "increaseBalance": "افزایش موجودی",
+    "currency": "تومان",
+    "sidebar": {
+      "account": "حساب کاربری",
+      "myTrips": "سفر های من",
+      "passengers": "لیست های مسافران",
+      "wishlist": "علاقه مندی ها",
+      "support": "درخواست پشتیبانی",
+      "balance": "موجودی و اعتبار من"
+    },
+    "sections": {
+      "accountInfo": "اطلاعات حساب کاربری",
+      "personalInfo": "اطلاعات شخصی",
+      "bankInfo": "اطلاعات حساب بانکی"
+    },
+    "fields": {
+      "mobile": "شماره موبایل",
+      "email": "ایمیل",
+      "password": "کلمه عبور",
+      "fullName": "نام و نام خانوادگی",
+      "nationalId": "کد ملی",
+      "emergencyContact": "شماره تماس ضروری",
+      "birthDate": "تاریخ تولد",
+      "sheba": "شماره شبا",
+      "accountNumber": "شماره حساب",
+      "cardNumber": "شماره کارت"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "save": "ثبت",
+      "close": "بستن",
+      "editPassword": "ویرایش کلمه عبور",
+      "editInfo": "ویرایش اطلاعات"
+    },
+    "modals": {
+      "editPhone": {
+        "title": "ویرایش شماره موبایل",
+        "description": "برای ویرایش، شماره موبایل جدید خود را وارد کنید."
+      },
+      "editEmail": {
+        "title": "ویرایش آدرس ایمیل",
+        "description": "برای ویرایش، آدرس ایمیل جدید خود را وارد کنید."
+      },
+      "editPassword": {
+        "title": "تغییر کلمه عبور",
+        "description": "رمز عبور فعلی و رمز عبور جدید خود را وارد نمایید.",
+        "currentPassword": "رمز عبور فعلی",
+        "newPassword": "رمز عبور جدید",
+        "confirmPassword": "تکرار رمز عبور جدید",
+        "passwordHint": "رمز عبور باید بیشتر از ۶ رقم باشد."
+      },
+      "editPersonal": {
+        "title": "ویرایش اطلاعات شخصی",
+        "firstName": "نام",
+        "lastName": "نام خانوادگی",
+        "birthDate": "تاریخ تولد",
+        "gender": "جنسیت",
+        "selectGender": "جنسیت خود را انتخاب کنید",
+        "male": "مرد",
+        "female": "زن",
+        "nationalId": "کد ملی",
+        "emergencyNumber": "شماره تماس ضروری"
+      },
+      "editBank": {
+        "title": "ویرایش اطلاعات حساب بانکی",
+        "description": "اطلاعات حساب بانکی به منظور بازگشت وجه پس از استرداد دریافت می‌شود.",
+        "sheba": "شماره شبا",
+        "accountNumber": "شماره حساب",
+        "cardNumber": "شماره کارت"
+      }
+    },
+    "notSet": "—"
+  },
+  "wishlist": {
+    "title": "پرتو سیر | علاقه‌مندی‌ها",
+    "pageTitle": "علاقه‌مندی‌ها",
+    "emptyTitle": "لیست علاقه‌مندی‌ها خالی است",
+    "emptyMessage": "هیچ موردی در لیست علاقه‌مندی‌های شما وجود ندارد.",
+    "emptyDescription": "می‌توانید مسیرها و مقاصد مورد علاقه خود را به این لیست اضافه کنید.",
+    "addToWishlist": "افزودن به علاقه‌مندی‌ها",
+    "removeFromWishlist": "حذف از علاقه‌مندی‌ها",
+    "itemsCount": "تعداد موارد",
+    "clearAll": "پاک کردن همه",
+    "suggestions": "پیشنهادها برای شما",
+    "viewDetails": "مشاهده جزئیات",
+    "bookNow": "رزرو کنید",
+    "categories": {
+      "popularRoutes": "مسیرهای پرطرفدار",
+      "recentSearches": "جستجوهای اخیر",
+      "savedDestinations": "مقاصد ذخیره شده"
+    }
+  },
+  "transactions": {
+    "accountBalance": "موجودی حساب",
+    "increaseBalance": "افزایش موجودی",
+    "withdrawBalance": "برداشت موجودی",
+    "historyTitle": "تاریخچه تراکنش‌ها و درخواست‌ها",
+    "dateTime": "تاریخ و ساعت",
+    "amount": "مبلغ (تومان)",
+    "type": "نوع تراکنش",
+    "description": "توضیحات",
+    "emptyTitle": "تراکنشی یافت نشد",
+    "emptyMessage": "هنوز هیچ تراکنشی در حساب شما ثبت نشده است.",
+    "amountPlaceholder": "مبلغ مورد نظر (تومان)",
+    "cashInInfo": "مبلغ مورد نظر برای افزایش موجودی را وارد کنید"
+  },
+  "support": {
+    "pageTitle": "درخواست‌های پشتیبانی",
+    "ticketsCount": "تعداد درخواست‌ها",
+    "newTicket": "ایجاد درخواست جدید",
+    "emptyTitle": "صندوق درخواست‌های پشتیبانی شما خالی است",
+    "emptyMessage": "اگر سوال یا مشکلی دارید می توانید با ایجاد درخواست پشتیبانی در سریعترین زمان ممکن آن را پیگیری کنید",
+    "emptyDescription": "تیم پشتیبانی پرتو سیر آماده پاسخگویی به سوالات شماست",
+    "ticketWarning": "لطفا تا زمان به نتیجه‌رسیدن درخواست فعلی، درخواست جدیدی در همان زمینه ثبت نکنید",
+    "ticketType": "نوع درخواست",
+    "selectType": "انتخاب کنید",
+    "orderNumber": "شماره سفارش",
+    "orderNumberPlaceholder": "شماره سفارش مربوطه را وارد کنید",
+    "subject": "موضوع",
+    "subjectPlaceholder": "موضوع درخواست خود را وارد کنید",
+    "description": "توضیحات",
+    "descriptionPlaceholder": "شرح کامل مشکل یا سوال خود را بنویسید",
+    "viewDetails": "مشاهده جزئیات",
+    "followUp": "پیگیری",
+    "createdAt": "تاریخ ایجاد",
+    "lastUpdate": "آخرین بروزرسانی",
+    "conversation": "مکاتبات",
+    "you": "شما",
+    "supportTeam": "پشتیبانی پرتو سیر",
+    "replyPlaceholder": "پاسخ خود را بنویسید",
+    "typeYourMessage": "پیام خود را تایپ کنید...",
+    "sendReply": "ارسال پاسخ",
+    "status": {
+      "open": "باز",
+      "pending": "در حال بررسی",
+      "resolved": "حل شده",
+      "closed": "بسته شده"
+    }
+  },
+  "passengers": {
+    "pageTitle": "لیست های مسافران",
+    "passengersCount": "تعداد مسافران",
+    "addNewPassenger": "افزودن مسافر جدید",
+    "editPassenger": "ویرایش اطلاعات مسافر",
+    "fullName": "نام و نام خانوادگی",
+    "gender": "جنسیت",
+    "nationalId": "کدملی",
+    "birthDate": "تاریخ تولد",
+    "passportNumber": "شماره پاسپورت",
+    "emptyTitle": "لیست مسافران خالی است",
+    "emptyMessage": "هنوز هیچ مسافری به لیست خود اضافه نکرده‌اید",
+    "addFirstPassenger": "افزودن اولین مسافر",
+    "delete": "حذف",
+    "edit": "ویرایش",
+    "firstNameFarsi": "نام فارسی",
+    "firstNameFarsiPlaceholder": "نام فارسی را وارد کنید",
+    "lastNameFarsi": "نام خانوادگی فارسی",
+    "lastNameFarsiPlaceholder": "نام خانوادگی فارسی را وارد کنید",
+    "firstNameEnglish": "نام لاتین",
+    "firstNameEnglishPlaceholder": "نام لاتین را وارد کنید",
+    "lastNameEnglish": "نام خانوادگی لاتین",
+    "lastNameEnglishPlaceholder": "نام خانوادگی لاتین را وارد کنید",
+    "day": "روز",
+    "month": "ماه",
+    "year": "سال",
+    "selectGender": "جنسیت خود را انتخاب کنید",
+    "male": "مرد",
+    "female": "زن",
+    "nationalIdInfo": "برای مسافرین ایرانی که قصد سفر به نقاط مختلف داخل کشور را دارند، ارائه کد ملی الزامی است.",
+    "passportNumberPlaceholder": "در صورت داشتن پاسپورت وارد کنید"
+  },
+  "common": {
+    "cancel": "بستن",
+    "submit": "ثبت",
+    "update": "بروزرسانی",
+    "actions": "عملیات",
+     "clear": "پاک کردن",
+    "search": "جستجو",
+     "back": "بازگشت",
+      "currency": "تومان",
+    "close": "بستن",
+    "confirmAndContinue": "تایید و ادامه خرید"
+  },
+  "orders": {
+    "pageTitle": "سفر های من",
+    "filterTitle": "جستجو در سفرها",
+    "orderNumber": "شماره سفارش",
+    "orderNumberPlaceholder": "شماره سفارش را وارد کنید",
+    "orderType": "نوع سفارش",
+    "selectOrderType": "انتخاب کنید",
+    "fromDate": "از",
+    "toDate": "تا",
+    "paidAmount": "مبلغ پرداخت شده",
+    "route": "مسیر",
+    "dateTime": "تاریخ و ساعت",
+    "orderDetails": "جزییات سفارش و استرداد",
+    "emptyTitle": "سفری یافت نشد",
+    "emptyMessage": "هنوز هیچ سفری ثبت نکرده‌اید",
+    "status": {
+      "finalized": "نهایی شده",
+      "pending": "در انتظار",
+      "cancelled": "لغو شده",
+      "refunded": "عودت داده شده"
+    }
+  },
+  "orderDetails": {
+    "orderNumber": "شماره سفارش",
+    "serviceType": "نوع سفر",
+    "purchaseTime": "زمان خرید",
+    "status": {
+      "finalized": "نهایی شده",
+      "pending": "در انتظار",
+      "cancelled": "لغو شده"
+    },
+    "tickets": "بلیط ها",
+    "downloadTicket": "دانلود بلیط",
+    "departureTime": "زمان حرکت",
+    "start": "شروع",
+    "end": "پایان",
+    "trainInfo": "اطلاعات قطار",
+    "hallName": "نام سالن",
+    "trainNumber": "شماره قطار",
+    "trainType": "نوع قطار",
+    "passengers": "مسافران",
+    "seat": "صندلی",
+    "cabin": "کوپه",
+    "nationalId": "کد ملی",
+    "paidAmount": "مبلغ پرداخت شده"
+  },
+  "order": {
+    "steps": {
+      "selectFlight": "انتخاب پرواز",
+      "passengerDetails": "مشخصات مسافران",
+      "travelServices": "خدمات سفر",
+      "confirmInfo": "تایید اطلاعات",
+      "payment": "پرداخت",
+      "ticketIssuance": "صدور بلیط"
+    },
+    "flight": {
+      "company": "تابان",
+      "type": "سیستمی",
+      "class": "اکونومی",
+      "aircraft": "Boeing MD-۸۰",
+      "from": "تهران",
+      "to": "مشهد",
+      "departureTime": "۲۲:۳۰",
+      "arrivalTime": "۲۳:۴۵",
+      "date": "دوشنبه ، ۱۵ مرداد",
+      "direction": "بلیط رفت",
+      "changeTicket": "تغییر بلیط"
+    },
+    "pricing": {
+      "adult": "بزرگسال",
+      "total": "مجموع"
+    },
+    "passengerDetails": {
+      "title": "مشخصات مسافران",
+      "adult": "بزرگسال",
+      "nationalId": "کارت ملی",
+      "passport": "پاسپورت",
+      "selectPreviousPassenger": "انتخاب مسافر سابق",
+      "firstName": "نام",
+      "lastName": "نام خانوادگی",
+      "gender": "جنسیت",
+      "selectGender": "جنسیت خود را انتخاب کنید",
+      "male": "مرد",
+      "female": "زن",
+      "nationalIdNumber": "کد ملی",
+      "birthDate": "تاریخ تولد",
+      "day": "روز",
+      "month": "ماه",
+      "year": "سال",
+      "addNewPassenger": "اضافه کردن مسافر جدید"
+    },
+    "previousPassengers": {
+      "title": "لیست مسافران سابق",
+      "fullName": "نام و نام خانوادگی",
+      "nationalId": "کدملی",
+      "birthDate": "تاریخ تولد",
+      "select": "انتخاب",
+      "sampleName": "علی محمدی",
+      "sampleNationalId": "۰۱۲۳۴۵۶۷۸۹",
+      "sampleBirthDate": "۱۳۰۰/۰۱/۰۱"
+    },
+    "footer": {
+      "agreement": "با کلیک روی تایید و ادامه خرید با {{siteRules}} و {{flightRules}} موافقت کرده‌اید.",
+      "siteRules": "قوانین سایت",
+      "flightRules": "قوانین پرواز",
+      "confirmAndContinue": "تایید و ادامه خرید"
+    }
+  },
+  // "order": {
+  //   "steps": {
+  //     "selectFlight": "انتخاب پرواز",
+  //     "passengerDetails": "مشخصات مسافران",
+  //     "travelServices": "خدمات سفر",
+  //     "confirmInfo": "تایید اطلاعات",
+  //     "payment": "پرداخت",
+  //     "ticketIssuance": "صدور بلیط"
+  //   }
+  // },
+  "ticketIssuance": {
+    "title": "صدور بلیط",
+    "successMessage": "بلیط شما با موفقیت صادر شد",
+    "orderNumberLabel": "شماره سفارش",
+    "sampleOrderNumber": "۱۲۳۴۵۶۸۹۰",
+    "downloadTicket": "دانلود بلیط",
+    "viewOrder": "مشاهده سفارش",
+    "additionalInfo": "بلیط شما به ایمیلتان نیز ارسال شده است. در صورت نیاز به راهنمایی بیشتر با پشتیبانی تماس بگیرید.",
+    "contactSupport": "تماس با پشتیبانی",
+    "faq": "سوالات متداول",
+    "nextSteps": {
+      "title": "مراحل بعدی",
+      "step1": {
+        "title": "دانلود بلیط",
+        "description": "بلیط خود را دانلود و چاپ کنید"
+      },
+      "step2": {
+        "title": "ارسال به ایمیل",
+        "description": "بلیط به ایمیل شما ارسال شده است"
+      },
+      "step3": {
+        "title": "آماده سفر",
+        "description": "با خیال راحت سفر کنید"
+      }
+    }
+  },
+  "refund": {
+    "pageTitle": "مشخصات مسافران",
+    "passengerCount": "۱ مسافر",
+    "totalPrice": "۲،۱۰۰،۰۰۰",
+    "terms": {
+      "title": "شرایط و قوانین"
+    },
+    "normalRefund": {
+      "title": "استرداد عادی",
+      "price": "بدون هزینه",
+      "description": "استرداد این بلیط مطابق قوانین ایرلاین از ۱۲ ساعت قبل از پرواز شامل حداقل ۲,۱۰۰,۰۰۰ تومان جریمه خواهد بود."
+    },
+    "noPenaltyRefund": {
+      "title": "استرداد بدون جریمه",
+      "price": "۴۲۰,۰۰۰",
+      "description": "در صورت استرداد تا 12 ساعت قبل از پرواز، مبلغ بلیط بدون جریمه به شما برمی‌گردد."
+    },
+    "conditions": {
+      "condition1": "جهت استفاده از این ضمانت، فقط کافیست درخواست استرداد خود را ثبت کنید. پس از بررسی مبلغ بلیط به صورت کامل برای شما واریز خواهد شد.",
+      "condition2": "توجه نمایید که برای استفاده از ضمانت میبایست حداکثر تا 12 ساعت مانده به پرواز، درخواست استرداد خود را ثبت نمایید.",
+      "condition3": "پس از استرداد، تنها مبلغ بلیط پرداخت می‌شود و هزینه پرداخت شده جهت ضمانت شامل بازپرداخت نمی‌شود.",
+      "condition4": "در صورت کنسل شدن پرواز به علت تغییرات ایرلاین، مبلغ ضمانت به مسافر باز می‌گردد."
+    }
+  },
+  "confirmation": {
+    "ticketInfo": {
+      "title": "اطلاعات بلیط",
+      "originLabel": "مبدا",
+      "destinationLabel": "مقصد",
+      "airlineLabel": "شرکت هواپیمایی",
+      "dateTimeLabel": "تاریخ و ساعت پرواز",
+      "flightNumberLabel": "شماره پرواز",
+      "flightClassLabel": "کلاس پروازی",
+      "baggageAllowanceLabel": "مقدار بار مجاز",
+      "origin": "تهران",
+      "destination": "مشهد",
+      "airline": "تابان",
+      "dateTime": "دوشنبه ۱۵ مرداد - ۲۲:۳۰",
+      "flightNumber": "HH ۱۲۳۴",
+      "flightClass": "اکونومی",
+      "baggageAllowance": "20 کیلوگرم"
+    },
+    "passengers": {
+      "title": "مشخصات مسافران",
+      "ageGroup": "بازه سنی",
+      "fullName": "نام و نام خانوادگی",
+      "gender": "جنسیت",
+      "nationalId": "کدملی",
+      "birthDate": "تاریخ تولد",
+      "nationality": "ملیت",
+      "adult": "بزرگسال",
+      "sampleName": "علی محمدی",
+      "male": "مرد",
+      "sampleNationalId": "۰۱۲۳۴۵۶۷۸۹",
+      "sampleBirthDate": "۱۳۰۰/۰۱/۰۱",
+      "iranian": "ایران"
+    },
+    "travelServices": {
+      "title": "خدمات سفر",
+      "normalRefund": "استرداد عادی",
+      "refundWarning": "در صورت استرداد، بر اساس زمان اعلام کنسلی درصد جریمه مشخصی از کل مبلغ بلیط کسر خواهد شد."
+    },
+    "notification": {
+      "title": "اطلاع رسانی سفر",
+      "description": "اطلاعات بلیط و اطلاع‌رسانی بعدی به این ادرس ارسال می‌شود.",
+      "email": "ایمیل",
+      "phone": "شماره موبایل"
+    },
+    "contactInfo": {
+      "email": "...",
+      "phone": "..."
+    },
+    "discount": {
+      "title": "کد تخفیف",
+      "clickToEnter": "برای وارد کردن کد تخفیف کلیک کنید",
+      "instructions": "کد تخفیف خود را در بخش زیر وارد کنید و دکمه ثبت را بزنید.",
+      "placeholder": "کد تخفیف",
+      "apply": "ثبت",
+      "appliedSuccess": "کد تخفیف با موفقیت اعمال شد"
+    },
+    "payment": {
+      "payableAmount": "مبلغ قابل پرداخت",
+      "totalPrice": "۲،۱۰۰،۰۰۰"
+    }
+  }
+
+
+
+
+
+},
         about: {
           storyTitle: "داستان ما",
           storyContent: "شرکت بین المللی پرتوسیر ایرانیان با بیش از 27 سال تجربه (1376) با هدف ارائه خدمات حمل ونقل بین المللی مسافر تاسیس شد و مدیر عامل کنونی آقای ناصرکلانتری شرکت با ناوگانی متشکل از 30دستگاه اتوبوس ، 24 دستگاه ون و 54 دستگاه سواری های برون شهری ملکی و تحت پوشش و با بهره مندی از شعب فعال در شهرهای چون ساری ،مشهد ، قم ، اهواز ، زاهدان ، تایباد ، زابل ،چابهار، رشت ، تهران و ایلام فعالیت دارد.",
@@ -531,7 +1027,7 @@ i18n.use(initReactI18next).init({
           support: "پشتیبانی",
           refundPolicy: "سیاست بازپرداخت",
           contactUs: "تماس با ما",
-          copyright: "  kalanholding.com - Website designed by ",
+          copyright: "  partoseir.com - Website designed by ",
           logoAlt: "لوگوی دانشگاه",
           frameAlt: "قاب دانشگاه"
         },
@@ -684,6 +1180,11 @@ i18n.use(initReactI18next).init({
     "select": "انتخاب",
     "continue": "ادامه",
     "submit": "ثبت"
+  },
+    notfound:{
+      title: 'به زودی ',
+      description: 'لطفا منتظر رونمایی این صفحه باشید',
+      button: 'برو به صفحه اصلی'
   }
 
 
@@ -876,7 +1377,7 @@ i18n.use(initReactI18next).init({
           support: "Поддержка",
           refundPolicy: "Политика возврата",
           contactUs: "Свяжитесь с нами",
-          copyright: " kalanholding.com - Сайт разработан ",
+          copyright: " partoseir.com - Сайт разработан ",
           logoAlt: "Логотип компании",
           frameAlt: "Фрейм компании"
         },
@@ -1022,6 +1523,11 @@ i18n.use(initReactI18next).init({
     "select": "Выбрать",
     "continue": "Продолжить",
     "submit": "Отправить"
+  },
+  notfound:{
+     title: 'Скоро этот раздел будет активен',
+      description: 'Пожалуйста, ждите запуска этой страницы',
+      button: 'На главную'
   }
 
 
@@ -1215,7 +1721,7 @@ i18n.use(initReactI18next).init({
           support: "الدعم",
           refundPolicy: "سياسة الاسترجاع",
           contactUs: "اتصل بنا",
-          copyright: " kalanholding.com - تم تصميم الموقع بواسطة ",
+          copyright: " partoseir.com - تم تصميم الموقع بواسطة ",
           logoAlt: "شعار الشركة",
           frameAlt: "إطار الشركة"
         },
@@ -1361,6 +1867,11 @@ i18n.use(initReactI18next).init({
     "select": "اختيار",
     "continue": "متابعة",
     "submit": "إرسال"
+  },
+    notfound:{
+      title: 'قريباً سيكون هذا القسم نشطاً',
+      description: 'يرجى الانتظار لإطلاق هذه الصفحة',
+      button: 'اذهب إلى الصفحة الرئيسية'
   }
 
       }
@@ -1552,7 +2063,7 @@ i18n.use(initReactI18next).init({
           support: "ملاتړ",
           refundPolicy: "د بیرته ورکولو تګلاره",
           contactUs: "موږ سره اړیکه",
-          copyright: " kalanholding.com - ویب پاڼه د لخوا ډیزاین شوی ",
+          copyright: " partoseir.com - ویب پاڼه د لخوا ډیزاین شوی ",
           logoAlt: "د شرکت نښه",
           frameAlt: "د شرکت فریم"
         },
@@ -1696,6 +2207,11 @@ i18n.use(initReactI18next).init({
     "select": "ټاکل",
     "continue": "ادامه",
     "submit": "سپارل"
+  },
+   notfound:{
+      title: 'ډیر ژر به دا برخه فعاله شي',
+      description: 'مهرباني وکړئ د دې پاڼې د پرانیستلو لپاره انتظار وکړئ',
+      button: 'کور ته لاړ شه'
   }
 
       }

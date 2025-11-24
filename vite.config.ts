@@ -27,6 +27,6 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-   base: 'https://kalanholding.com/'
+   base: 'https://partoseir.com/'
 });
 

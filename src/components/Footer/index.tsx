@@ -105,7 +105,7 @@ export default function Footer() {
               <Typography
                 variant="h6"
                 sx={{
-                  textDecoration: 'underline',
+                  // textDecoration: 'underline',
                   color: 'text.primary',
                   fontFamily: theme.typography.fontFamily,
                   marginBottom: 1,
@@ -139,7 +139,7 @@ export default function Footer() {
               <Typography
                 variant="h6"
                 sx={{
-                  textDecoration: 'underline',
+                  // textDecoration: 'underline',
                   color: 'text.primary',
                   fontFamily: theme.typography.fontFamily,
                   marginBottom: 1,

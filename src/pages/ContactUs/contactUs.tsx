@@ -476,8 +476,8 @@ const ContactUs = () => {
       title: t('contact.email.title'),
       details: [
         {
-          label: 'info@kalanholding.com',
-          href: 'mailto:info@kalanholding.com',
+          label: 'info@partoseir.com',
+          href: 'mailto:info@partoseir.com',
           isLink: true
         },
         {

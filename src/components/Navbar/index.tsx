@@ -1188,7 +1188,7 @@ const NavContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  backgroundColor: 'rgba(1, 166, 147, 0.2)',
+  backgroundColor: 'rgba(1, 166, 147, 0.3)',
   borderRadius: 5,
   border: '0.5px solid gray',
   padding: 8,
@@ -1504,7 +1504,7 @@ const Navbar = () => {
           {t('navbar.about')}
         </MenuItem>
 
-         <MenuItem onClick={() => { navigate('/‌BusTicketsList'); closeMenu(); }}  sx={{ fontFamily: theme.typography.fontFamily }}>
+         <MenuItem onClick={() => { navigate('/BusTicketsList'); closeMenu(); }}  sx={{ fontFamily: theme.typography.fontFamily }}>
           {t('ticket.Tickets')}
         </MenuItem>
 

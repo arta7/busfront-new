@@ -719,7 +719,7 @@ const LoginPage = forwardRef<HTMLDivElement, ContainerProps>((props, ref) => {
 
   return (
     <Provider>
-      <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1000 }}>
+      {/* <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1000 }}>
         <Button 
           variant="outlined" 
           onClick={toggleLanguage}
@@ -733,7 +733,7 @@ const LoginPage = forwardRef<HTMLDivElement, ContainerProps>((props, ref) => {
         >
           {i18n.language === 'fa' ? 'English' : 'فارسی'}
         </Button>
-      </Box>
+      </Box> */}
 
       <Username 
         value={mobileNumber} 
