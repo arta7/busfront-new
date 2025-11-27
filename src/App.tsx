@@ -15,10 +15,10 @@ import Demopage from './pages/DemoPage/demopage';
 import UserProtectedRoute from './components/ProtectedRoutes';
 import { Toaster } from 'react-hot-toast';
 import AdminDashBoard from './pages/AdminDashBoard';
-import ProfilePage from './pages/Profile/profilePage';
+import ProfilePage from './pages/Profile/ProfilePage';
 import AdminProtectedRoute from './components/AdminProtectedRoutes';
 import AdminSchedule from './pages/AdminSchedule';
-import NotFoundPage from './pages/NotFoundPage';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import PricingPage from './pages/PricingPage/PricingPage';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndconditions/TermsPage';
@@ -50,6 +50,12 @@ import OrderPage from './pages/Profile/orderpage.tsx';
 import TicketIssuancePage from './pages/Tickets/TicketIssuancePage.tsx';
 import RefundSelectionPage from './pages/Tickets/RefundSelectionPage.tsx';
 import OrderConfirmationPage from './pages/Tickets/OrderConfirmationPage.tsx';
+import ContactPage from './pages/ContactUs/ContactPage.tsx';
+import BranchesPage from './pages/Branches/BranchesPage.tsx';
+import VanBookingPage from './pages/Booking/VanBookingPage.tsx';
+import InternationalFlightsPage from './pages/Booking/InternationalFlightsPage.tsx';
+import TrainBookingPage from './pages/Booking/TrainBookingPage.tsx';
+import AboutUsPage from './pages/AboutUs/AboutUsPage.tsx';
 
 // Create RTL cache
 const cacheRtl = createCache({
@@ -141,7 +147,7 @@ useEffect(() => {
                     <Route path="/bus-schedule" element={<BusSchedule />} />
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/about" element={<AboutUs />} />
+                    <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/MapList" element={<MapList />} />
                      <Route path="/tickets" element={<TicketDetail />} />
                     <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
@@ -150,6 +156,12 @@ useEffect(() => {
                     <Route path="/contactus" element={<ContactUs />} />
                       <Route path="/PaymentSuccessPage" element={<PaymentSuccessPage />} />
                       <Route path="/PaymentCancelPage" element={<PaymentCancelPage />} />
+
+                       <Route path="/VanBookingPage" element={<VanBookingPage />} />
+                         <Route path="/InternationalFlightsPage" element={<InternationalFlightsPage />} />
+                         <Route path="/TrainBookingPage" element={<TrainBookingPage />} />
+
+
                     <Route
                       path="/checkout"
                       element={
@@ -252,6 +264,28 @@ useEffect(() => {
                         </UserProtectedRoute>
                       }
                     />
+
+                    <Route
+                      path="/ContactPage"
+                      element={
+                        <UserProtectedRoute>
+                          <ContactPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+
+                      <Route
+                      path="/BranchesPage"
+                      element={
+                        <UserProtectedRoute>
+                          <BranchesPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+
+
 
                     <Route
                       path="/OrderDetailsPage"
