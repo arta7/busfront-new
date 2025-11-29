@@ -359,7 +359,7 @@ i18n.use(initReactI18next).init({
       "roundTrip": "دو طرفه",
       "origin": "مبدا (شهر)",
       "destination": "مقصد (شهر)",
-      "departureDate": "تاریخ رفت",
+      "departureDate": "تاریخ ",
       "returnDate": "تاریخ برگشت",
       "passengers": "مسافر",
       "search": "جستجو",
@@ -1440,19 +1440,19 @@ newprofile:{
     "confirm": "تایید و دریافت",
     "loginWithPassword": "ورود با کلمه عبور"
   },
-  "profile": {
-    "title": "پروفایل کاربری",
-    "verified": "تایید شده",
-    "wallet": "موجودی حساب",
-    "increaseBalance": "افزایش موجودی",
-    "specialAccount": "حساب ویژه پرتو سیر",
-    "userAccount": "حساب کاربری",
-    "myTrips": "سفر های من",
-    "passengerLists": "لیست های مسافران",
-    "wishlist": "علاقه مندی ها",
-    "support": "درخواست پشتیبانی",
-    "balance": "موجودی و اعتبار من"
-  },
+  // "profile": {
+  //   "title": "پروفایل کاربری",
+  //   "verified": "تایید شده",
+  //   "wallet": "موجودی حساب",
+  //   "increaseBalance": "افزایش موجودی",
+  //   "specialAccount": "حساب ویژه پرتو سیر",
+  //   "userAccount": "حساب کاربری",
+  //   "myTrips": "سفر های من",
+  //   "passengerLists": "لیست های مسافران",
+  //   "wishlist": "علاقه مندی ها",
+  //   "support": "درخواست پشتیبانی",
+  //   "balance": "موجودی و اعتبار من"
+  // },
   "share": {
     "title": "اشتراک گذاری",
     "copyLink": "کپی لینک"
