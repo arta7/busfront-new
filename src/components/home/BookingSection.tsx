@@ -1,300 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//   Box,
-//   Container,
-//   Paper,
-//   Tabs,
-//   Tab,
-//   FormControl,
-//   InputLabel,
-//   Select,
-//   MenuItem,
-//   TextField,
-//   Button,
-//   Typography,
-//   Grid,
-//   Popover,
-//   IconButton
-// } from '@mui/material';
-// import {
-//   Search as SearchIcon,
-//   Add as AddIcon,
-//   Remove as RemoveIcon
-// } from '@mui/icons-material';
-// import { useTranslation } from 'react-i18next';
-
-// // ایمپورت کامپوننت‌های تاریخ شمسی
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { AdapterDateFnsJalali } from '@mui/x-date-pickers/AdapterDateFnsJalali';
-
-// const BookingSection = () => {
-//   const { t } = useTranslation();
-//   const [serviceType, setServiceType] = useState(0);
-//   const [bookingType, setBookingType] = useState('1');
-//   const [passengerAnchor, setPassengerAnchor] = useState(null);
-//   const [passengers, setPassengers] = useState({
-//     adults: 1,
-//     children: 0,
-//     infants: 0
-//   });
-//   const [departureDate, setDepartureDate] = useState(null);
-//   const [returnDate, setReturnDate] = useState(null);
-
-//   const services = [
-//     { icon: <SearchIcon />, label: t('homepage.home.services.bus') },
-//     { icon: <SearchIcon />, label: t('homepage.home.services.taxi') },
-//     { icon: <SearchIcon />, label: t('homepage.home.services.van') },
-//     { icon: <SearchIcon />, label: t('homepage.home.services.cargo') }
-//   ];
-
-//   const cities = [
-//     t('cities.tehran'),
-//     t('cities.ahvaz'),
-//     t('cities.shiraz'),
-//     t('cities.mashhad'),
-//     t('cities.bandar'),
-//     t('cities.esfehan'),
-//     t('cities.tabriz'),
-//     t('cities.kish')
-//   ];
-
-//   const handlePassengerClick = (event) => {
-//     setPassengerAnchor(event.currentTarget);
-//   };
-
-//   const handlePassengerClose = () => {
-//     setPassengerAnchor(null);
-//   };
-
-//   const updatePassenger = (type, operation) => {
-//     setPassengers(prev => ({
-//       ...prev,
-//       [type]: operation === 'increase' ? prev[type] + 1 : Math.max(0, prev[type] - 1)
-//     }));
-//   };
-
-//   const totalPassengers = passengers.adults + passengers.children + passengers.infants;
-
-//   return (
-//     <LocalizationProvider dateAdapter={AdapterDateFnsJalali}>
-//       <Box 
-//         sx={{ 
-//           backgroundImage: 'url(/img/pages/index/booking/sliderf.webp)',
-//           backgroundSize: 'cover',
-//           backgroundPosition: 'center',
-//           py: 8
-//         }}
-//       >
-//         <Container>
-//           <Paper 
-//             elevation={8}
-//             sx={{ 
-//               borderRadius: 2,
-//               overflow: 'hidden'
-//             }}
-//           >
-//             {/* Service Tabs */}
-//             <Tabs
-//               value={serviceType}
-//               onChange={(e, newValue) => setServiceType(newValue)}
-//               variant="fullWidth"
-//               sx={{ borderBottom: 1, borderColor: 'divider' }}
-//             >
-//               {services.map((service, index) => (
-//                 <Tab 
-//                   key={index}
-//                   icon={service.icon}
-//                   label={service.label}
-//                   sx={{ py: 2 }}
-//                 />
-//               ))}
-//             </Tabs>
-
-//             {/* Booking Form */}
-//             <Box sx={{ p: 4 }}>
-//               <Grid container spacing={3}>
-//                 {/* Booking Type */}
-//                 <Grid item xs={12}>
-//                   {/* <FormControl size="small">
-//                     <Select
-//                       value={bookingType}
-//                       onChange={(e) => setBookingType(e.target.value)}
-//                       sx={{ borderRadius: '50px' }}
-//                     >
-//                       <MenuItem value="1">{t('homepage.home.booking.oneWay')}</MenuItem>
-//                       <MenuItem value="2">{t('homepage.home.booking.roundTrip')}</MenuItem>
-//                     </Select>
-//                   </FormControl> */}
-//                 </Grid>
-
-//                 {/* From & To */}
-//                 <Grid item xs={12} md={6} lg={5}>
-//                   <Grid container spacing={2}>
-//                     <Grid item xs={12}>
-//                       <FormControl fullWidth>
-//                         <InputLabel>{t('homepage.home.booking.origin')}</InputLabel>
-//                         <Select label={t('homepage.home.booking.origin')}>
-//                           <MenuItem value=""><em>{t('homepage.home.booking.origin')}</em></MenuItem>
-//                           {cities.map((city, index) => (
-//                             <MenuItem key={index} value={city}>{city}</MenuItem>
-//                           ))}
-//                         </Select>
-//                       </FormControl>
-//                     </Grid>
-//                     <Grid item xs={12}>
-//                       <FormControl fullWidth>
-//                         <InputLabel>{t('homepage.home.booking.destination')}</InputLabel>
-//                         <Select label={t('homepage.home.booking.destination')}>
-//                           <MenuItem value=""><em>{t('homepage.home.booking.destination')}</em></MenuItem>
-//                           {cities.map((city, index) => (
-//                             <MenuItem key={index} value={city}>{city}</MenuItem>
-//                           ))}
-//                         </Select>
-//                       </FormControl>
-//                     </Grid>
-//                   </Grid>
-//                 </Grid>
-
-//                 {/* Dates */}
-//                 <Grid item xs={12} md={6} lg={3}>
-//                   <Grid container spacing={2}>
-//                     <Grid item xs={12}>
-//                       <DatePicker
-//                         label={t('homepage.home.booking.departureDate')}
-//                         value={departureDate}
-//                         onChange={(newValue) => setDepartureDate(newValue)}
-//                         renderInput={(params) => <TextField {...params} fullWidth />}
-//                       />
-//                     </Grid>
-             
-//                   </Grid>
-//                 </Grid>
-
-//                 {/* Passengers */}
-//                 <Grid item xs={6} md={6} lg={2}>
-               
-
-//                   <Popover
-//                     open={Boolean(passengerAnchor)}
-//                     anchorEl={passengerAnchor}
-//                     onClose={handlePassengerClose}
-//                     anchorOrigin={{
-//                       vertical: 'bottom',
-//                       horizontal: 'left',
-//                     }}
-//                   >
-//                     <Box sx={{ p: 2, minWidth: 300 }}>
-//                       {/* Adults */}
-//                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-//                         <Box>
-//                           <Typography variant="body1">
-//                             {t('homepage.home.booking.adult')}
-//                           </Typography>
-//                           <Typography variant="caption" color="text.secondary">
-//                             {t('homepage.home.booking.adultDesc')}
-//                           </Typography>
-//                         </Box>
-//                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('adults', 'decrease')}
-//                             disabled={passengers.adults <= 0}
-//                           >
-//                             <RemoveIcon />
-//                           </IconButton>
-//                           <Typography>{passengers.adults}</Typography>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('adults', 'increase')}
-//                           >
-//                             <AddIcon />
-//                           </IconButton>
-//                         </Box>
-//                       </Box>
-
-//                       {/* Children */}
-//                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-//                         <Box>
-//                           <Typography variant="body1">
-//                             {t('homepage.home.booking.child')}
-//                           </Typography>
-//                           <Typography variant="caption" color="text.secondary">
-//                             {t('homepage.home.booking.childDesc')}
-//                           </Typography>
-//                         </Box>
-//                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('children', 'decrease')}
-//                             disabled={passengers.children <= 0}
-//                           >
-//                             <RemoveIcon />
-//                           </IconButton>
-//                           <Typography>{passengers.children}</Typography>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('children', 'increase')}
-//                           >
-//                             <AddIcon />
-//                           </IconButton>
-//                         </Box>
-//                       </Box>
-
-//                       {/* Infants */}
-//                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-//                         <Box>
-//                           <Typography variant="body1">
-//                             {t('homepage.home.booking.infant')}
-//                           </Typography>
-//                           <Typography variant="caption" color="text.secondary">
-//                             {t('homepage.home.booking.infantDesc')}
-//                           </Typography>
-//                         </Box>
-//                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('infants', 'decrease')}
-//                             disabled={passengers.infants <= 0}
-//                           >
-//                             <RemoveIcon />
-//                           </IconButton>
-//                           <Typography>{passengers.infants}</Typography>
-//                           <IconButton 
-//                             size="small" 
-//                             onClick={() => updatePassenger('infants', 'increase')}
-//                           >
-//                             <AddIcon />
-//                           </IconButton>
-//                         </Box>
-//                       </Box>
-//                     </Box>
-//                   </Popover>
-//                 </Grid>
-
-//                 {/* Search Button */}
-//                 <Grid item xs={6} md={6} lg={2}>
-//                   <Button
-//                     fullWidth
-//                     variant="contained"
-//                     size="large"
-//                     startIcon={<SearchIcon />}
-//                     sx={{ py: 2 }}
-//                   >
-//                     {t('homepage.home.booking.search')}
-//                   </Button>
-//                 </Grid>
-//               </Grid>
-//             </Box>
-//           </Paper>
-//         </Container>
-//       </Box>
-//     </LocalizationProvider>
-//   );
-// };
-
-// export default BookingSection;
-
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
@@ -332,6 +35,9 @@ import UserContext from './../../UserContext';
 import { GetCities } from '../../Api/ApiMaster';
 import getTheme from '../../theme';
 import DropdownComponent from '../../pages/Home/DropDown';
+
+import headerImage from '../../img/pages/index/booking/sliderf.webp'
+
 // مسیر کامپوننت Dropdown
 
 const BookingSection = (props) => {
@@ -535,19 +241,19 @@ const BookingSection = (props) => {
   // تصویر پس‌زمینه بر اساس نوع سرویس انتخابی
   const getBackgroundImage = () => {
     const serviceImages = {
-      '1': '/img/pages/index/booking/sliderf.webp', // اتوبوس
+      '1': headerImage, // اتوبوس
       '2': '/img/pages/index/booking/taxi-bg.jpg',  // تاکسی
-      '3': '/img/pages/index/booking/van-bg.jpg',   // ون
+      '3': '../../img/pages/index/booking/van-bg.jpg',   // ون
       '4': '/img/pages/index/booking/cargo-bg.jpg'  // بار
     };
     
-    const currentService = userData[0]?.radioType || '1';
+    const currentService = '1';
     return `url(${serviceImages[currentService]})`;
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFnsJalali}>
-      <Box 
+    <Box 
         sx={{ 
           backgroundImage: getBackgroundImage(),
           backgroundSize: 'cover',
@@ -555,6 +261,9 @@ const BookingSection = (props) => {
           backgroundRepeat: 'no-repeat',
           py: isMobile ? 4 : 8,
           position: 'relative',
+          minHeight: isMobile ? 400 : 500,
+          display: 'flex',
+          alignItems: 'center',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -569,11 +278,18 @@ const BookingSection = (props) => {
       >
         <Container sx={{ position: 'relative', zIndex: 2 }}>
           <Paper 
+            // elevation={8}
+            // sx={{ 
+            //   borderRadius: 2,
+            //   overflow: 'hidden',
+            //   backgroundColor: 'rgba(255, 255, 255, 0.95)'
+            // }}
             elevation={8}
             sx={{ 
               borderRadius: 2,
               overflow: 'hidden',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)'
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)'
             }}
           >
             {/* Service Tabs */}
@@ -606,15 +322,7 @@ const BookingSection = (props) => {
                 {/* Origin City */}
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth size={isMobile ? "small" : "medium"}>
-                    {/* <InputLabel shrink={false} sx={{ 
-                      color: 'black', 
-                      fontFamily: theme.typography.fontFamily,
-                      backgroundColor: 'white',
-                      px: 1,
-                      ml: -0.5
-                    }}>
-                      {t('homepage.home.booking.origin')}
-                    </InputLabel> */}
+                   
                     <DropdownComponent
                       data={CityList}
                       labelField={labelField}
@@ -764,7 +472,7 @@ const BookingSection = (props) => {
                             color="text.secondary"
                             fontFamily={theme.typography.fontFamily}
                           >
-                            {t('homepage.home.booking.adultDesc')}
+                            {/* {t('homepage.home.booking.adultDesc')} */}
                           </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -791,7 +499,7 @@ const BookingSection = (props) => {
                       </Box>
 
                       {/* Children */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                      {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                         <Box>
                           <Typography 
                             variant="body1" 
@@ -829,10 +537,10 @@ const BookingSection = (props) => {
                             <AddIcon />
                           </IconButton>
                         </Box>
-                      </Box>
+                      </Box> */}
 
                       {/* Infants */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box>
                           <Typography 
                             variant="body1" 
@@ -870,7 +578,7 @@ const BookingSection = (props) => {
                             <AddIcon />
                           </IconButton>
                         </Box>
-                      </Box>
+                      </Box> */}
                     </Box>
                   </Popover>
                 </Grid>

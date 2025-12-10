@@ -46,7 +46,7 @@ import ProfileTicketingPage from './pages/Profile/ProfileTicketingPage.tsx';
 import ProfilePassengersPage from './pages/Profile/ProfilePassengersPage.tsx';
 import ProfileOrdersPage from './pages/Profile/ProfileOrdersPage.tsx';
 import OrderDetailsPage from './pages/Profile/OrderDetailsPage.tsx';
-import OrderPage from './pages/Profile/orderpage.tsx';
+import OrderPage from './pages/Profile/OrderPage.tsx';
 import TicketIssuancePage from './pages/Tickets/TicketIssuancePage.tsx';
 import RefundSelectionPage from './pages/Tickets/RefundSelectionPage.tsx';
 import OrderConfirmationPage from './pages/Tickets/OrderConfirmationPage.tsx';
@@ -56,6 +56,8 @@ import VanBookingPage from './pages/Booking/VanBookingPage.tsx';
 import InternationalFlightsPage from './pages/Booking/InternationalFlightsPage.tsx';
 import TrainBookingPage from './pages/Booking/TrainBookingPage.tsx';
 import AboutUsPage from './pages/AboutUs/AboutUsPage.tsx';
+import SearchPage from './pages/Home/SearchPage.tsx';
+import OrderRefundPage from './pages/Tickets/OrderRefundPage.tsx';
 
 // Create RTL cache
 const cacheRtl = createCache({
@@ -92,22 +94,22 @@ function App() {
   // حالت زبان و جهت را از localStorage دریافت می‌کند یا پیش‌فرض انگلیسی (LTR) قرار می‌دهد
   const [language, setLanguage] = useState(localStorage.getItem('language'));
   const [isRTL, setIsRTL] = useState(['en', 'ru', 'he'].includes(language));
-  
 
-useEffect(() => {
+
+  useEffect(() => {
     const setLanguage = async () => {
       const language = await localStorage.getItem("language");
       i18n.changeLanguage(language);
-       setIsRTL(['en', 'ru', 'he'].includes(language));
+      setIsRTL(['en', 'ru', 'he'].includes(language));
     }
     setLanguage()
   }, [])
- 
+
 
   // useEffect(()=>{
   //   console.log('language',language)
   //    i18n.changeLanguage(language);
-      
+
   // },[])
 
   // تغییر زبان و جهت
@@ -137,9 +139,10 @@ useEffect(() => {
                 <ValidateAuth />
                 <CssBaseline />
                 <Box margin={{ xs: '0.5rem', md: '1rem 1rem' }}>
-                  {
-                  //showNavbarAndFooter &&
-                   <Navbar />}
+                  
+                    
+                     {/* <Navbar /> */}
+                    
                   <Routes>
                     <Route path="/Logins" element={<Logins />} />
                     <Route path="/" element={<Home />} />
@@ -149,17 +152,18 @@ useEffect(() => {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/MapList" element={<MapList />} />
-                     <Route path="/tickets" element={<TicketDetail />} />
+                    <Route path="/tickets" element={<TicketDetail />} />
                     <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-                     <Route path="/BusTicketsList" element={<BusTicketsList />} />
+                    <Route path="/BusTicketsList" element={<BusTicketsList />} />
                     <Route path="/refund-policy" element={<RefundPolicy />} />
                     <Route path="/contactus" element={<ContactUs />} />
-                      <Route path="/PaymentSuccessPage" element={<PaymentSuccessPage />} />
-                      <Route path="/PaymentCancelPage" element={<PaymentCancelPage />} />
+                    <Route path="/PaymentSuccessPage" element={<PaymentSuccessPage />} />
+                    <Route path="/PaymentCancelPage" element={<PaymentCancelPage />} />
 
-                       <Route path="/VanBookingPage" element={<VanBookingPage />} />
-                         <Route path="/InternationalFlightsPage" element={<InternationalFlightsPage />} />
-                         <Route path="/TrainBookingPage" element={<TrainBookingPage />} />
+                    <Route path="/VanBookingPage" element={<VanBookingPage />} />
+                    <Route path="/InternationalFlightsPage" element={<InternationalFlightsPage />} />
+                    <Route path="/TrainBookingPage" element={<TrainBookingPage />} />
+
 
 
                     <Route
@@ -210,7 +214,17 @@ useEffect(() => {
                         </UserProtectedRoute>
                       }
                     />
-                     <Route
+
+                    <Route
+                      path="/search-results"
+                      element={
+                        <UserProtectedRoute>
+                          <SearchPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+                    <Route
                       path="/ProfileTransactionsPage"
                       element={
                         <UserProtectedRoute>
@@ -220,7 +234,7 @@ useEffect(() => {
                     />
 
 
-                     <Route
+                    <Route
                       path="/profile-orders"
                       element={
                         <UserProtectedRoute>
@@ -228,7 +242,7 @@ useEffect(() => {
                         </UserProtectedRoute>
                       }
                     />
-                     <Route
+                    <Route
                       path="/OrderPage"
                       element={
                         <UserProtectedRoute>
@@ -237,7 +251,7 @@ useEffect(() => {
                       }
                     />
 
-                     <Route
+                    <Route
                       path="/TicketIssuancePage"
                       element={
                         <UserProtectedRoute>
@@ -246,7 +260,7 @@ useEffect(() => {
                       }
                     />
 
-                     <Route
+                    <Route
                       path="/RefundSelectionPage"
                       element={
                         <UserProtectedRoute>
@@ -256,8 +270,8 @@ useEffect(() => {
                     />
 
 
-                      <Route
-                      path="/OrderConfirmationPage"
+                    <Route
+                      path="/orders-confirm"
                       element={
                         <UserProtectedRoute>
                           <OrderConfirmationPage />
@@ -275,7 +289,7 @@ useEffect(() => {
                     />
 
 
-                      <Route
+                    <Route
                       path="/BranchesPage"
                       element={
                         <UserProtectedRoute>
@@ -296,7 +310,16 @@ useEffect(() => {
                       }
                     />
 
-                      <Route
+                      {/* <Route
+                      path="/orders-recovery"
+                      element={
+                        <UserProtectedRoute>
+                          <OrderRefundPage />
+                        </UserProtectedRoute>
+                      }
+                    /> */}
+
+                    <Route
                       path="/ProfileTicketingPage"
                       element={
                         <UserProtectedRoute>
@@ -306,7 +329,7 @@ useEffect(() => {
                     />
 
 
-                       <Route
+                    <Route
                       path="/profile-passengers"
                       element={
                         <UserProtectedRoute>
@@ -323,7 +346,7 @@ useEffect(() => {
                       }
                     />
                   </Routes>
-                  {showNavbarAndFooter && <Footer />}
+                  {/* {showNavbarAndFooter && <Footer />} */}
                 </Box>
               </UserContext.Provider>
               <Toaster />

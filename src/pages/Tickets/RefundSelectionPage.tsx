@@ -48,7 +48,7 @@ const RefundSelectionPage: React.FC = () => {
   const steps = [
     { label: t('order.steps.selectFlight'), icon: <CheckIcon />, completed: true },
     { label: t('newprofile.order.steps.passengerDetails'), icon: <GroupsIcon />, completed: true },
-    { label: t('newprofile.order.steps.travelServices'), icon: <DescriptionIcon />, completed: true },
+    // { label: t('newprofile.order.steps.travelServices'), icon: <DescriptionIcon />, completed: true },
     { label: t('newprofile.order.steps.confirmInfo'), icon: <ChecklistIcon />, active: true },
     { label: t('newprofile.order.steps.payment'), icon: <CreditCardIcon /> },
     { label: t('newprofile.order.steps.ticketIssuance'), icon: <ConfirmationNumberIcon /> }

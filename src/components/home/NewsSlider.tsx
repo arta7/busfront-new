@@ -241,7 +241,7 @@ interface Route {
   price: string;
 }
 
-const PopularRoutes: React.FC = () => {
+const NewsSlider: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -410,4 +410,4 @@ const PopularRoutes: React.FC = () => {
   );
 };
 
-export default PopularRoutes;
+export default NewsSlider;

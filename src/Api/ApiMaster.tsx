@@ -247,6 +247,9 @@ export function BusDetailss(_requestNumber, _sourceCode, _busCode, HeaderValue, 
     "sourceCode": _sourceCode,
     "busCode": _busCode
   }
+
+   
+  console.log('params : ',params)
   setLoading(true)
 
   axios({
