@@ -21,7 +21,7 @@ import AdminSchedule from './pages/AdminSchedule';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import PricingPage from './pages/PricingPage/PricingPage';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
-import TermsAndConditions from './pages/TermsAndconditions/TermsPage';
+import TermsAndConditions from './pages/TermsAndconditions/TermsAndConditions.tsx';
 import RefundPolicy from './pages/RefundPolicy/RefundPolicy';
 import ContactUs from './pages/ContactUs/contactUs.tsx';
 import AboutUs from './pages/AboutUs/AboutUs';
@@ -58,6 +58,9 @@ import TrainBookingPage from './pages/Booking/TrainBookingPage.tsx';
 import AboutUsPage from './pages/AboutUs/AboutUsPage.tsx';
 import SearchPage from './pages/Home/SearchPage.tsx';
 import OrderRefundPage from './pages/Tickets/OrderRefundPage.tsx';
+import TermsPage from './pages/TermsAndconditions/TermsPage.tsx'
+import ProfileOrdersDetails from './pages/Profile/ProfileOrdersDetails.tsx';
+
 
 // Create RTL cache
 const cacheRtl = createCache({
@@ -87,7 +90,8 @@ function App() {
         sourcelong: '',
         deslat: '',
         deslong: '',
-        radioType: '1'
+        radioType: '1',
+        Email:'arta7191@gmail.com'
       }]
   );
 
@@ -149,13 +153,15 @@ function App() {
                     <Route path="/google" element={<GoogleAuthLogin />} />
                     <Route path="/bus-schedule" element={<BusSchedule />} />
                     <Route path="/pricing" element={<PricingPage />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/MapList" element={<MapList />} />
-                    <Route path="/tickets" element={<TicketDetail />} />
-                    <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                    {/* <Route path="/tickets" element={<TicketDetail />} /> */}
+                    {/* <Route path="/terms-and-conditions" element={<TermsAndConditions />} /> */}
+                    <Route path="/terms" element={<TermsPage />} />
                     <Route path="/BusTicketsList" element={<BusTicketsList />} />
-                    <Route path="/refund-policy" element={<RefundPolicy />} />
+                    {/* <Route path="/refund-policy" element={<RefundPolicy />} /> */}
+                    <Route path="/refund" element={<RefundPolicy />} />
                     <Route path="/contactus" element={<ContactUs />} />
                     <Route path="/PaymentSuccessPage" element={<PaymentSuccessPage />} />
                     <Route path="/PaymentCancelPage" element={<PaymentCancelPage />} />
@@ -225,7 +231,7 @@ function App() {
                     />
 
                     <Route
-                      path="/ProfileTransactionsPage"
+                      path="/profile-transactions"
                       element={
                         <UserProtectedRoute>
                           <ProfileTransactionsPage />
@@ -239,6 +245,15 @@ function App() {
                       element={
                         <UserProtectedRoute>
                           <ProfileOrdersPage />
+                        </UserProtectedRoute>
+                      }
+                    />
+
+          <Route
+                      path="/profile-orders-detail"
+                      element={
+                        <UserProtectedRoute>
+                          <ProfileOrdersDetails />
                         </UserProtectedRoute>
                       }
                     />
@@ -280,7 +295,7 @@ function App() {
                     />
 
                     <Route
-                      path="/ContactPage"
+                      path="/contact"
                       element={
                         <UserProtectedRoute>
                           <ContactPage />
@@ -290,7 +305,7 @@ function App() {
 
 
                     <Route
-                      path="/BranchesPage"
+                      path="/branches"
                       element={
                         <UserProtectedRoute>
                           <BranchesPage />
@@ -310,14 +325,14 @@ function App() {
                       }
                     />
 
-                      {/* <Route
+                      <Route
                       path="/orders-recovery"
                       element={
                         <UserProtectedRoute>
                           <OrderRefundPage />
                         </UserProtectedRoute>
                       }
-                    /> */}
+                    />
 
                     <Route
                       path="/ProfileTicketingPage"

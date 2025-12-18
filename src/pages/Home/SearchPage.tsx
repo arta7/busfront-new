@@ -1,961 +1,1293 @@
-// import React, { useState } from 'react';
-// import {
-//   Box,
-//   Container,
-//   Typography,
-//   Grid,
-//   Card,
-//   CardContent,
-//   Button,
-//   Paper,
-//   useTheme,
-//   useMediaQuery,
-//   AppBar,
-//   Toolbar,
-//   IconButton,
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   Accordion,
-//   AccordionSummary,
-//   AccordionDetails,
-//   FormControlLabel,
-//   Checkbox,
-//   Chip,
-//   Tabs,
-//   Tab,
-//   Divider,
-//   List,
-//   ListItem,
-//   ListItemText,
-//   Slider,
-//   Badge
-// } from '@mui/material';
-// import {
-//   Menu as MenuIcon,
-//   Close as CloseIcon,
-//   Person as PersonIcon,
-//   Brightness4 as DarkIcon,
-//   Brightness7 as LightIcon,
-//   Phone as PhoneIcon,
-//   Telegram as TelegramIcon,
-//   Twitter as TwitterIcon,
-//   YouTube as YouTubeIcon,
-//   Instagram as InstagramIcon,
-//   LinkedIn as LinkedInIcon,
-//   Search as SearchIcon,
-//   ExpandMore as ExpandMoreIcon,
-//   Flight as FlightIcon,
-//   CalendarToday as CalendarIcon,
-//   People as PeopleIcon,
-//   Info as InfoIcon,
-//   FilterAlt as FilterIcon,
-//   Sort as SortIcon
-// } from '@mui/icons-material';
-// import { useTranslation } from 'react-i18next';
-// import { Swiper, SwiperSlide } from 'swiper/react';
-// import { Navigation, Pagination } from 'swiper/modules';
+
+// import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import Header from '../../components/home/Header';
+// import Footer from '../../components/home/Footer';
+// import UserContext from './../../UserContext';
+// import { BusSearch } from '../../Api/ApiMaster';
+// import moment from 'moment-jalaali';
+// import Swiper from 'swiper';
+// import { Navigation } from 'swiper/modules';
 // import 'swiper/css';
 // import 'swiper/css/navigation';
-// import 'swiper/css/pagination';
 
-// const SearchPage: React.FC = () => {
-//   const { t } = useTranslation();
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-//   const [menuOpen, setMenuOpen] = useState(false);
-//   const [signModalOpen, setSignModalOpen] = useState(false);
+// function SearchPage() {
 //   const [darkMode, setDarkMode] = useState(false);
 //   const [searchExpanded, setSearchExpanded] = useState(false);
+//   const [selectedDate, setSelectedDate] = useState(new Date());
+//   const [datePrices, setDatePrices] = useState([]);
+//   const [flightData, setFlightData] = useState({ searchItems: [], totalCount: 0 });
+//   const [loading, setLoading] = useState(false);
+//   const [activeSort, setActiveSort] = useState('recommended');
+//   const [expandedFlightId, setExpandedFlightId] = useState(null); // برای نمایش تب‌های هر پرواز
+//   const [activeFlightTab, setActiveFlightTab] = useState({}); // برای هر پرواز تب فعال
 //   const [passengers, setPassengers] = useState({
-//     adults: 1,
+//     adults: 0,
 //     children: 0,
 //     infants: 0
 //   });
-//   const [activeSort, setActiveSort] = useState('recommended');
-//   const [activeFlightTab, setActiveFlightTab] = useState(0);
+//   const [totalTravelers, setTotalTravelers] = useState(0);
 
-//   // داده‌های نمونه
-//   const airlines = [
-//     { id: 'taban', name: t('newprofile.search.airlines.taban'), logo: '/img/pages/search/logos/taban-sm.png' },
-//     { id: 'ata', name: t('newprofile.search.airlines.ata'), logo: '/img/pages/search/logos/ata-sm.png' },
-//     { id: 'flypersia', name: t('newprofile.search.airlines.flypersia'), logo: '/img/pages/search/logos/flypersia-sm.png' },
-//     { id: 'karun', name: t('newprofile.search.airlines.karun'), logo: '/img/pages/search/logos/karun-sm.png' },
-//     { id: 'aseman', name: t('newprofile.search.airlines.aseman'), logo: '/img/pages/search/logos/aseman-sm.png' },
-//     { id: 'saha', name: t('newprofile.search.airlines.saha'), logo: '/img/pages/search/logos/saha-sm.png' }
-//   ];
+//   const { userData, setUserData } = useContext(UserContext);
+//   const navigate = useNavigate();
+//   const lastFetchedDateRef = useRef('');
+//   const isMountedRef = useRef(true);
+//   const swiperRef = useRef(null);
 
-//   const flights = [
-//     {
-//       id: 1,
-//       airline: 'ata',
-//       flightNumber: '7401',
-//       from: 'تهران',
-//       to: 'شیراز',
-//       departureTime: '۲۱:۴۰',
-//       arrivalTime: '۲۲:۵۰',
-//       price: '۱،۳۰۰،۰۰۰',
-//       seatsLeft: 3,
-//       aircraft: 'Boeing MD-82',
-//       class: 'اکونومی',
-//       type: 'سیستمی',
-//       luggage: '20 کیلوگرم',
-//       terminal: 'فرودگاه مهرآباد - ترمینال 4'
-//     },
-//     {
-//       id: 2,
-//       airline: 'flypersia',
-//       flightNumber: '7402',
-//       from: 'تهران',
-//       to: 'شیراز',
-//       departureTime: '۲۱:۵۰',
-//       arrivalTime: '۲۳:۱۰',
-//       price: '۱،۲۱۰،۸۰۰',
-//       seatsLeft: 2,
-//       aircraft: 'Boeing 737-300',
-//       class: 'اکونومی',
-//       type: 'سیستمی',
-//       luggage: '20 کیلوگرم',
-//       terminal: 'فرودگاه مهرآباد - ترمینال 4'
-//     }
-//   ];
+//   // محاسبه تعداد کل مسافران
+//   useEffect(() => {
+//     const total = passengers.adults + passengers.children + passengers.infants;
+//     setTotalTravelers(total);
+//   }, [passengers]);
 
-//   const datePrices = [
-//     { date: 'شنبه - 05/06', price: '1,210', active: true },
-//     { date: 'یک‌شنبه - 05/07', price: '1,400', active: false },
-//     { date: 'دوشنبه - 05/08', price: '2,003', active: false },
-//     { date: 'سه‌شنبه - 05/09', price: '2,300', active: false },
-//     { date: 'چهارشنبه - 05/10', price: '2,199', active: false },
-//     { date: 'پنج‌شنبه - 05/11', price: '2,199', active: false },
-//     { date: 'جمعه - 05/12', price: '2,003', active: false },
-//     { date: 'شنبه - 05/13', price: '2,199', active: false }
-//   ];
-
-//   // Header Component
-//   const Header = () => (
-//     <AppBar position="static" color="default" elevation={1}>
-//       <Toolbar>
-//         <Container maxWidth="lg">
-//           <Grid container alignItems="center" spacing={2}>
-//             <Grid item xs={6} md={2}>
-//               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-//                 {isMobile && (
-//                   <IconButton onClick={() => setMenuOpen(true)}>
-//                     <MenuIcon />
-//                   </IconButton>
-//                 )}
-//                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//                   <Box
-//                     component="img"
-//                     src="/img/logo-m.png"
-//                     alt={t('newprofile.header.title')}
-//                     sx={{ width: 40, height: 40 }}
-//                   />
-//                   <Typography variant="h6" fontWeight="bold">
-//                     {t('newprofile.header.title')}
-//                   </Typography>
-//                 </Box>
-//               </Box>
-//             </Grid>
-
-//             <Grid item md={8} sx={{ display: { xs: 'none', md: 'block' } }}>
-//               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-//                 <Button color="inherit">{t('newprofile.header.services')}</Button>
-//                 <Button color="inherit">{t('newprofile.header.about')}</Button>
-//                 <Button color="inherit">{t('newprofile.header.contact')}</Button>
-//                 <Button color="inherit">{t('newprofile.header.stations')}</Button>
-//                 <Button color="inherit">{t('newprofile.header.bookedTickets')}</Button>
-//               </Box>
-//             </Grid>
-
-//             <Grid item xs={6} md={2}>
-//               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-//                 <IconButton onClick={() => setDarkMode(!darkMode)}>
-//                   {darkMode ? <LightIcon /> : <DarkIcon />}
-//                 </IconButton>
-//                 <Button
-//                   variant="outlined"
-//                   startIcon={<PersonIcon />}
-//                   onClick={() => setSignModalOpen(true)}
-//                 >
-//                   {t('newprofile.auth.loginSignup')}
-//                 </Button>
-//               </Box>
-//             </Grid>
-//           </Grid>
-//         </Container>
-//       </Toolbar>
-//     </AppBar>
-//   );
-
-//   // Search Header Section
-//   const SearchHeader = () => (
-//     <Paper 
-//       elevation={2} 
-//       sx={{ 
-//         bgcolor: 'background.paper',
-//         borderRadius: 2,
-//         mb: 2,
-//         cursor: 'pointer'
-//       }}
-//       onClick={() => setSearchExpanded(!searchExpanded)}
-//     >
-//       <Box sx={{ p: 3 }}>
-//         <Grid container alignItems="center" spacing={3}>
-//           <Grid item xs={12} md={3}>
-//             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//               <FlightIcon color="primary" />
-//               <Typography variant="h6">
-//                 {t('newprofile.search.header.ticket')} {t('newprofile.search.header.fromTo')}
-//               </Typography>
-//             </Box>
-//           </Grid>
-          
-//           <Grid item xs={12} md={2}>
-//             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//               <CalendarIcon color="primary" />
-//               <Typography variant="body1">
-//                 {t('newprofile.search.header.date')}
-//               </Typography>
-//             </Box>
-//           </Grid>
-          
-//           <Grid item xs={12} md={2}>
-//             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//               <PeopleIcon color="primary" />
-//               <Typography variant="body1">
-//                 {passengers.adults + passengers.children + passengers.infants} {t('newprofile.search.header.passengers')}
-//               </Typography>
-//             </Box>
-//           </Grid>
-          
-//           <Grid item xs={12} md={2}>
-//             <Button
-//               variant="contained"
-//               startIcon={<SearchIcon />}
-//               fullWidth
-//             >
-//               {t('newprofile.search.header.editSearch')}
-//             </Button>
-//           </Grid>
-//         </Grid>
-//       </Box>
-//     </Paper>
-//   );
-
-//   // Filters Sidebar
-//   const FiltersSidebar = () => (
-//     <Card sx={{ display: { xs: 'none', md: 'block' } }}>
-//       <CardContent sx={{ p: 3 }}>
-//         {/* Filter Header */}
-//         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-//           <Typography variant="h6" fontWeight="bold">
-//             {t('newprofile.search.filters.title')}
-//           </Typography>
-//           <Button size="small" color="primary">
-//             {t('newprofile.search.filters.clearAll')}
-//           </Button>
-//         </Box>
-
-//         {/* Active Filters */}
-//         <Box sx={{ mb: 3 }}>
-//           <Chip
-//             label="نوع بلیط: سیستمی"
-//             onDelete={() => {}}
-//             variant="outlined"
-//             size="small"
-//             sx={{ mb: 1 }}
-//           />
-//         </Box>
-
-//         {/* Filters Accordion */}
-//         <Accordion defaultExpanded>
-//           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-//             <Typography fontWeight="bold">{t('newprofile.search.filters.departureTime')}</Typography>
-//           </AccordionSummary>
-//           <AccordionDetails>
-//             <Slider
-//               defaultValue={[6, 22]}
-//               valueLabelDisplay="auto"
-//               valueLabelFormat={(value) => `${value}:00`}
-//               min={0}
-//               max={24}
-//               sx={{ mt: 2 }}
-//             />
-//           </AccordionDetails>
-//         </Accordion>
-
-//         <Accordion defaultExpanded>
-//           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-//             <Typography fontWeight="bold">{t('newprofile.search.filters.ticketType')}</Typography>
-//           </AccordionSummary>
-//           <AccordionDetails>
-//             <FormControlLabel
-//               control={<Checkbox defaultChecked />}
-//               label={t('newprofile.search.filters.ticketTypes.system')}
-//             />
-//             <FormControlLabel
-//               control={<Checkbox />}
-//               label={t('newprofile.search.filters.ticketTypes.charter')}
-//             />
-//           </AccordionDetails>
-//         </Accordion>
-
-//         <Accordion defaultExpanded>
-//           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-//             <Typography fontWeight="bold">{t('newprofile.search.filters.airlines')}</Typography>
-//           </AccordionSummary>
-//           <AccordionDetails>
-//             {airlines.map((airline) => (
-//               <FormControlLabel
-//                 key={airline.id}
-//                 control={<Checkbox />}
-//                 label={
-//                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//                     <Box
-//                       component="img"
-//                       src={airline.logo}
-//                       alt={airline.name}
-//                       sx={{ width: 20, height: 20 }}
-//                     />
-//                     {airline.name}
-//                   </Box>
-//                 }
-//               />
-//             ))}
-//           </AccordionDetails>
-//         </Accordion>
-
-//         <Accordion defaultExpanded>
-//           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-//             <Typography fontWeight="bold">{t('newprofile.search.filters.otherOptions')}</Typography>
-//           </AccordionSummary>
-//           <AccordionDetails>
-//             <FormControlLabel
-//               control={<Checkbox />}
-//               label={t('newprofile.search.filters.otherOptionsList.duplicateTickets')}
-//             />
-//             <FormControlLabel
-//               control={<Checkbox />}
-//               label={t('newprofile.search.filters.otherOptionsList.availableTickets')}
-//             />
-//           </AccordionDetails>
-//         </Accordion>
-//       </CardContent>
-//     </Card>
-//   );
-
-//   // Date Price Slider
-//   const DatePriceSlider = () => (
-//     <Card sx={{ mb: 3 }}>
-//       <CardContent sx={{ p: 2 }}>
-//         <Swiper
-//           modules={[Navigation]}
-//           spaceBetween={10}
-//           slidesPerView={isMobile ? 3 : 7}
-//           navigation
-//         >
-//           {datePrices.map((datePrice, index) => (
-//             <SwiperSlide key={index}>
-//               <Paper
-//                 sx={{
-//                   p: 2,
-//                   textAlign: 'center',
-//                   cursor: 'pointer',
-//                   bgcolor: datePrice.active ? 'primary.light' : 'background.paper',
-//                   color: datePrice.active ? 'primary.contrastText' : 'text.primary',
-//                   transition: 'all 0.3s',
-//                   '&:hover': {
-//                     bgcolor: 'primary.main',
-//                     color: 'primary.contrastText'
-//                   }
-//                 }}
-//               >
-//                 <Typography variant="body2" sx={{ mb: 1 }}>
-//                   {datePrice.date}
-//                 </Typography>
-//                 <Typography 
-//                   variant="h6" 
-//                   color={datePrice.active ? 'success.main' : 'text.primary'}
-//                   fontWeight="bold"
-//                 >
-//                   {datePrice.price}
-//                 </Typography>
-//               </Paper>
-//             </SwiperSlide>
-//           ))}
-//         </Swiper>
-//       </CardContent>
-//     </Card>
-//   );
-
-//   // Flight Card Component
-//   const FlightCard = ({ flight }: { flight: any }) => {
-//     const airline = airlines.find(a => a.id === flight.airline);
+//   // تابع برای فرمت تاریخ شمسی
+//   const formatPersianDate = (date) => {
+//     const persianDayNames = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+//     const persianMonthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
     
-//     return (
-//       <Card sx={{ mb: 3, overflow: 'visible' }}>
-//         <Grid container>
-//           {/* Flight Info */}
-//           <Grid item xs={12} md={9}>
-//             <Box sx={{ p: 3 }}>
-//               {/* Airline and Basic Info */}
-//               <Grid container alignItems="center" spacing={3}>
-//                 <Grid item xs={2}>
-//                   <Box sx={{ textAlign: 'center' }}>
-//                     <Box
-//                       component="img"
-//                       src={airline?.logo}
-//                       alt={airline?.name}
-//                       sx={{ width: 50, height: 50, mb: 1 }}
-//                     />
-//                     <Typography variant="body1" fontWeight="bold">
-//                       {airline?.name}
-//                     </Typography>
-//                   </Box>
-//                 </Grid>
-                
-//                 <Grid item xs={10}>
-//                   <Box sx={{ mb: 2 }}>
-//                     <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-//                       <Chip label={flight.type} size="small" variant="outlined" />
-//                       <Chip label={flight.class} size="small" variant="outlined" />
-//                       <Chip label={flight.aircraft} size="small" variant="outlined" />
-//                     </Box>
-                    
-//                     <Grid container alignItems="center" spacing={2}>
-//                       <Grid item xs={4}>
-//                         <Typography variant="h6" fontWeight="bold">
-//                           {flight.departureTime}
-//                         </Typography>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {flight.from}
-//                         </Typography>
-//                       </Grid>
-                      
-//                       <Grid item xs={4} sx={{ textAlign: 'center' }}>
-//                         <FlightIcon sx={{ transform: 'rotate(90deg)', color: 'text.secondary' }} />
-//                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-//                           1h 10m
-//                         </Typography>
-//                       </Grid>
-                      
-//                       <Grid item xs={4} sx={{ textAlign: 'right' }}>
-//                         <Typography variant="h6" fontWeight="bold">
-//                           {flight.arrivalTime}
-//                         </Typography>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {flight.to}
-//                         </Typography>
-//                       </Grid>
-//                     </Grid>
-//                   </Box>
-
-//                   {/* Flight Details Tabs */}
-//                   <Tabs 
-//                     value={activeFlightTab} 
-//                     onChange={(e, newValue) => setActiveFlightTab(newValue)}
-//                     sx={{ mb: 2 }}
-//                   >
-//                     <Tab label={t('newprofile.search.results.flightInfo')} />
-//                     <Tab label={t('newprofile.search.results.refundRules')} />
-//                   </Tabs>
-
-//                   {activeFlightTab === 0 && (
-//                     <Grid container spacing={3}>
-//                       <Grid item xs={6} md={3}>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {t('newprofile.search.results.flightNumber')}
-//                         </Typography>
-//                         <Typography variant="body1" fontWeight="bold">
-//                           {flight.flightNumber}
-//                         </Typography>
-//                       </Grid>
-//                       <Grid item xs={6} md={3}>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {t('newprofile.search.results.cabinClass')}
-//                         </Typography>
-//                         <Typography variant="body1" fontWeight="bold">
-//                           {flight.class}
-//                         </Typography>
-//                       </Grid>
-//                       <Grid item xs={6} md={3}>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {t('newprofile.search.results.aircraftModel')}
-//                         </Typography>
-//                         <Typography variant="body1" fontWeight="bold">
-//                           {flight.aircraft}
-//                         </Typography>
-//                       </Grid>
-//                       <Grid item xs={6} md={3}>
-//                         <Typography variant="body2" color="text.secondary">
-//                           {t('newprofile.search.results.luggageAllowance')}
-//                         </Typography>
-//                         <Typography variant="body1" fontWeight="bold">
-//                           {flight.luggage}
-//                         </Typography>
-//                       </Grid>
-//                     </Grid>
-//                   )}
-
-//                   {activeFlightTab === 1 && (
-//                     <Box>
-//                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-//                         <InfoIcon color="info" />
-//                         <Typography variant="body2" color="text.secondary">
-//                           {t('newprofile.search.results.refundNote')}{' '}
-//                           <Button variant="text" size="small">
-//                             {t('newprofile.search.results.viewRefundRules')}
-//                           </Button>
-//                         </Typography>
-//                       </Box>
-                      
-//                       <Grid container spacing={2}>
-//                         {[30, 60, 70, 75].map((percent, index) => (
-//                           <Grid item xs={6} md={3} key={index}>
-//                             <Paper sx={{ p: 2, textAlign: 'center' }}>
-//                               <Typography variant="h6" color="error.main">
-//                                 {percent}%
-//                               </Typography>
-//                               <Typography variant="body2">
-//                                 شرایط بازگشت وجه
-//                               </Typography>
-//                             </Paper>
-//                           </Grid>
-//                         ))}
-//                       </Grid>
-//                     </Box>
-//                   )}
-//                 </Grid>
-//               </Grid>
-//             </Box>
-//           </Grid>
-
-//           {/* Price and Action */}
-//           <Grid item xs={12} md={3}>
-//             <Box 
-//               sx={{ 
-//                 bgcolor: 'grey.50',
-//                 height: '100%',
-//                 p: 3,
-//                 display: 'flex',
-//                 flexDirection: 'column',
-//                 justifyContent: 'center',
-//                 alignItems: 'center'
-//               }}
-//             >
-//               <Typography variant="h4" color="info.main" fontWeight="bold" gutterBottom>
-//                 {flight.price}
-//               </Typography>
-//               <Typography variant="body2" color="text.secondary" gutterBottom>
-//                 {t('newprofile.common.currency')}
-//               </Typography>
-              
-//               <Typography variant="body2" fontWeight="bold" gutterBottom>
-//                 {t('newprofile.search.results.officialRate')}
-//               </Typography>
-              
-//               <Button 
-//                 variant="contained" 
-//                 fullWidth 
-//                 size="large"
-//                 sx={{ mb: 2 }}
-//               >
-//                 {t('newprofile.search.results.selectFlight')}
-//               </Button>
-              
-//               <Typography variant="body2" color="error.main" gutterBottom>
-//                 {flight.seatsLeft} {t('newprofile.search.results.seatsLeft')}
-//               </Typography>
-
-//               <Box sx={{ width: '100%', mt: 2 }}>
-//                 <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderBottom: 1, borderColor: 'divider' }}>
-//                   <Typography variant="body2">{t('newprofile.search.results.adult')}</Typography>
-//                   <Typography variant="body2" fontWeight="bold">{flight.price} {t('newprofile.common.currency')}</Typography>
-//                 </Box>
-//                 <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
-//                   <Typography variant="body2">{t('newprofile.search.results.total')}</Typography>
-//                   <Typography variant="body2" fontWeight="bold">{flight.price} {t('newprofile.common.currency')}</Typography>
-//                 </Box>
-//               </Box>
-//             </Box>
-//           </Grid>
-//         </Grid>
-//       </Card>
-//     );
+//     const momentDate = moment(date);
+//     const dayOfWeek = momentDate.day();
+//     const day = momentDate.format('jD');
+//     const month = persianMonthNames[parseInt(momentDate.format('jM')) - 1];
+//     const persianDayName = persianDayNames[dayOfWeek];
+    
+//     return {
+//       fullDate: `${persianDayName} ${day} ${month}`,
+//       shortDate: `${persianDayName} - ${momentDate.format('jDD/jMM')}`,
+//       dayName: persianDayName,
+//       dayNumber: day,
+//       monthName: month
+//     };
 //   };
 
-//   // Main Content
-//   const MainContent = () => (
-//     <Box>
-//       {/* Results Header */}
-//       <Card sx={{ mb: 3 }}>
-//         <CardContent>
-//           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-//             <Typography variant="body1" color="text.secondary">
-//               {t('newprofile.search.results.showing')} 11 {t('newprofile.search.results.of')} 23 {t('newprofile.search.results.flights')}
-//             </Typography>
+//   // تولید آرایه تاریخ‌ها برای اسلایدر
+//   const generateDateArray = useCallback((baseDate) => {
+//     const dates = [];
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+    
+//     // 7 روز آینده
+//     for (let i = 0; i < 7; i++) {
+//       const date = new Date(today);
+//       date.setDate(today.getDate() + i);
+      
+//       const persianDate = formatPersianDate(date);
+//       const isToday = moment(date).isSame(today, 'day');
+//       const isSelected = moment(date).isSame(baseDate, 'day');
+//       const isPast = date < today;
+      
+//       // قیمت تصادفی برای نمایش
+//       const randomPrice = Math.floor(Math.random() * 300000) + 1000000;
+      
+//       dates.push({
+//         date: persianDate.shortDate,
+//         dateObj: date,
+//         active: isSelected,
+//         rawDate: date,
+//         isToday: isToday,
+//         isPast: isPast,
+//         price: randomPrice.toLocaleString()
+//       });
+//     }
+    
+//     return dates.sort((a, b) => a.dateObj - b.dateObj);
+//   }, []);
+
+//   // تابع برای فراخوانی API
+//   const fetchFlights = useCallback(async (date) => {
+//     if (!userData || userData.length === 0) {
+//       console.log('No user data available');
+//       return;
+//     }
+
+//     const dateString = moment(date).format('jYYYY-jMM-jDD');
+    
+//     if (lastFetchedDateRef.current === dateString) {
+//       console.log('Already fetched data for this date');
+//       return;
+//     }
+
+//     console.log('Fetching flights for date:', dateString);
+    
+//     try {
+//       setLoading(true);
+//       lastFetchedDateRef.current = dateString;
+      
+//       await BusSearch(
+//         userData[0].StartPlaceCode, 
+//         userData[0].EndPlaceCode,
+//         dateString,
+//         userData[0].Token,
+//         (isLoading) => {
+//           if (isMountedRef.current) {
+//             setLoading(isLoading);
+//           }
+//         }, 
+//         (data) => {
+//           if (isMountedRef.current) {
+//             console.log('Flight data received:', data);
+//             setFlightData(data || { searchItems: [], totalCount: 0 });
             
-//             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-//               <Typography variant="body2" color="text.secondary">
-//                 {t('newprofile.search.results.sortBy')}
-//               </Typography>
-//               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-//                 {['recommended', 'earliest', 'latest', 'cheapest', 'mostExpensive'].map((sort) => (
-//                   <Button
-//                     key={sort}
-//                     variant={activeSort === sort ? 'contained' : 'text'}
-//                     size="small"
-//                     onClick={() => setActiveSort(sort)}
-//                   >
-//                     {t(`newprofile.search.results.sortOptions.${sort}`)}
-//                   </Button>
-//                 ))}
-//               </Box>
-//             </Box>
-//           </Box>
-//         </CardContent>
-//       </Card>
+//             // مقداردهی اولیه تب‌ها برای هر پرواز
+//             const initialTabs = {};
+//             if (data?.searchItems) {
+//               data.searchItems.forEach((flight, index) => {
+//                 const flightId = flight.busCode || `flight-${index}`;
+//                 initialTabs[flightId] = 0; // همه روی تب اطلاعات اتوبوس
+//               });
+//             }
+//             setActiveFlightTab(initialTabs);
+//           }
+//         }, 
+//         setUserData, 
+//         userData, 
+//         {}
+//       );
+//     } catch (error) {
+//       console.error('Error fetching flights:', error);
+//       if (isMountedRef.current) {
+//         setFlightData({ searchItems: [], totalCount: 0 });
+//         setLoading(false);
+//         lastFetchedDateRef.current = '';
+//       }
+//     }
+//   }, [userData, setUserData]);
 
-//       {/* Price Note */}
-//       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-//         <InfoIcon color="info" />
-//         <Typography variant="body2" color="text.secondary">
-//           {t('newprofile.search.results.priceNote')}
-//         </Typography>
-//       </Box>
+//   // تابع برای toggle کردن تب‌های اطلاعات
+//   const toggleFlightTabs = (flightId) => {
+//     setExpandedFlightId(expandedFlightId === flightId ? null : flightId);
+//     // اگر پرواز باز می‌شود، تب اول را فعال کن
+//     if (expandedFlightId !== flightId) {
+//       setActiveFlightTab(prev => ({
+//         ...prev,
+//         [flightId]: 0 // تب اطلاعات اتوبوس به صورت پیش‌فرض
+//       }));
+//     }
+//   };
 
-//       {/* Flights List */}
-//       <Box>
-//         {flights.map((flight) => (
-//           <FlightCard key={flight.id} flight={flight} />
-//         ))}
-//       </Box>
-//     </Box>
-//   );
+//   // تابع تغییر تب برای هر پرواز
+//   const handleTabChange = (flightId, tabIndex) => {
+//     setActiveFlightTab(prev => ({
+//       ...prev,
+//       [flightId]: tabIndex
+//     }));
+//   };
 
-//   // Footer Component
-//   const Footer = () => (
-//     <Box
-//       component="footer"
-//       sx={{
-//         bgcolor: 'background.paper',
-//         borderTop: 1,
-//         borderColor: 'divider',
-//         mt: 8
-//       }}
-//     >
-//       <Container>
-//         <Box sx={{ py: 8 }}>
-//           <Grid container spacing={4}>
-//             <Grid item xs={12} md={6}>
-//               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-//                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-//                   <Box
-//                     component="img"
-//                     src="/img/logo-m.png"
-//                     alt={t('newprofile.header.title')}
-//                     sx={{ width: 60, height: 60 }}
-//                   />
-//                   <Typography variant="h4" fontWeight="bold">
-//                     {t('newprofile.header.title')}
-//                   </Typography>
-//                 </Box>
-                
-//                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-//                   <PhoneIcon fontSize="small" />
-//                   <Typography>
-//                     {t('newprofile.common.phone')}: ۰۱۱۳۳۲۴۳۰۵۶ - ۰۹۱۱۷۹۷۶۸۵۵
-//                   </Typography>
-//                 </Box>
-                
-//                 <Typography>
-//                   {t('newprofile.common.address')}: مازندران، ساری، ترمینال دولت، پرتو سیر ایرانیان
-//                 </Typography>
-                
-//                 <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-//                   {t('newprofile.footer.description')}
-//                 </Typography>
-//               </Box>
-//             </Grid>
+//   // تابع کلیک روی تاریخ در اسلایدر
+//   const handleDateClick = useCallback(async (dateObj, dateItem) => {
+//     if (dateItem.isPast) {
+//       console.log('Cannot select past date');
+//       return;
+//     }
+    
+//     console.log('Date clicked:', dateObj);
+//     setSelectedDate(dateObj);
+    
+//     // آپدیت تاریخ در userData
+//     if (userData && userData.length > 0) {
+//       const updatedUserData = [...userData];
+//       updatedUserData[0].DepartureDate = dateObj.toISOString();
+//       setUserData(updatedUserData);
+//       localStorage.setItem('storageData', JSON.stringify(updatedUserData));
+//     }
+    
+//     // آپدیت استیت تاریخ‌ها
+//     setDatePrices(prev => prev.map(item => ({
+//       ...item,
+//       active: moment(item.dateObj).isSame(dateObj, 'day')
+//     })));
+    
+//     // فراخوانی API برای تاریخ جدید
+//     await fetchFlights(dateObj);
+//   }, [userData, setUserData, fetchFlights]);
 
-//             <Grid item xs={12} md={6}>
-//               <Grid container spacing={4}>
-//                 <Grid item xs={6} md={4}>
-//                   <Typography variant="h6" fontWeight="bold" gutterBottom>
-//                     {t('newprofile.footer.about')}
-//                   </Typography>
-//                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-//                     <Button color="inherit" size="small">{t('newprofile.header.about')}</Button>
-//                     <Button color="inherit" size="small">{t('newprofile.header.contact')}</Button>
-//                   </Box>
-//                 </Grid>
-                
-//                 <Grid item xs={6} md={4}>
-//                   <Typography variant="h6" fontWeight="bold" gutterBottom>
-//                     {t('newprofile.footer.customerService')}
-//                   </Typography>
-//                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-//                     <Button color="inherit" size="small">{t('newprofile.footer.refundGuide')}</Button>
-//                     <Button color="inherit" size="small">{t('newprofile.footer.terms')}</Button>
-//                   </Box>
-//                 </Grid>
-                
-//                 <Grid item xs={6} md={4}>
-//                   <Typography variant="h6" fontWeight="bold" gutterBottom>
-//                     {t('newprofile.footer.additionalInfo')}
-//                   </Typography>
-//                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-//                     <Button color="inherit" size="small">{t('newprofile.footer.corporateSales')}</Button>
-//                     <Button color="inherit" size="small">{t('newprofile.footer.agencyCooperation')}</Button>
-//                   </Box>
-//                 </Grid>
-//               </Grid>
-//             </Grid>
-//           </Grid>
-//         </Box>
+//   // تابع به‌روزرسانی تعداد مسافران
+//   const updatePassengers = (type, operation) => {
+//     setPassengers(prev => {
+//       const newValue = operation === 'plus' ? prev[type] + 1 : Math.max(0, prev[type] - 1);
+//       return { ...prev, [type]: newValue };
+//     });
+//   };
 
-//         <Box sx={{ 
-//           borderTop: 1, 
-//           borderColor: 'divider', 
-//           py: 4,
-//           display: 'flex',
-//           justifyContent: 'space-between',
-//           alignItems: 'center',
-//           flexWrap: 'wrap',
-//           gap: 2
-//         }}>
-//           <Typography variant="body2" color="text.secondary">
-//             {t('newprofile.footer.copyright')} • {t('newprofile.footer.designCredit')}
-//           </Typography>
-          
-//           <Box sx={{ display: 'flex', gap: 1 }}>
-//             <IconButton size="small" color="primary">
-//               <TelegramIcon />
-//             </IconButton>
-//             <IconButton size="small" color="primary">
-//               <TwitterIcon />
-//             </IconButton>
-//             <IconButton size="small" color="primary">
-//               <YouTubeIcon />
-//             </IconButton>
-//             <IconButton size="small" color="primary">
-//               <InstagramIcon />
-//             </IconButton>
-//             <IconButton size="small" color="primary">
-//               <LinkedInIcon />
-//             </IconButton>
-//           </Box>
-//         </Box>
-//       </Container>
-//     </Box>
-//   );
+//   // مقداردهی اولیه
+//   useEffect(() => {
+//     console.log('Component initialized');
+//     isMountedRef.current = true;
+    
+//     // تاریخ اولیه
+//     let initialDate = new Date();
+//     if (userData && userData.length > 0 && userData[0].DepartureDate) {
+//       try {
+//         initialDate = new Date(userData[0].DepartureDate);
+//         if (isNaN(initialDate.getTime())) {
+//           initialDate = new Date();
+//         }
+//       } catch (error) {
+//         console.error('Error parsing date from userData:', error);
+//         initialDate = new Date();
+//       }
+//     }
+    
+//     // اگر تاریخ ذخیره شده گذشته است، امروز را نشان بده
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+//     initialDate.setHours(0, 0, 0, 0);
+    
+//     if (initialDate < today) {
+//       initialDate = new Date(today);
+//     }
+    
+//     setSelectedDate(initialDate);
+//     const initialDates = generateDateArray(initialDate);
+//     setDatePrices(initialDates);
+    
+//     // فراخوانی API اولیه
+//     if (userData && userData.length > 0) {
+//       setTimeout(() => {
+//         if (isMountedRef.current) {
+//           fetchFlights(initialDate);
+//         }
+//       }, 100);
+//     }
 
-//   // Auth Modal
-//   const AuthModal = () => (
-//     <Dialog 
-//       open={signModalOpen} 
-//       onClose={() => setSignModalOpen(false)}
-//       maxWidth="sm"
-//       fullWidth
-//     >
-//       <DialogTitle>
-//         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-//           <Typography variant="h6">{t('newprofile.auth.loginSignup')}</Typography>
-//           <IconButton onClick={() => setSignModalOpen(false)}>
-//             <CloseIcon />
-//           </IconButton>
-//         </Box>
-//       </DialogTitle>
-//       <DialogContent>
-//         <Box sx={{ textAlign: 'center', py: 4 }}>
-//           <Typography variant="h6" gutterBottom>
-//             {t('newprofile.auth.enterPhone')}
-//           </Typography>
-          
-//           <Box sx={{ my: 3 }}>
-//             <Typography variant="body2" color="text.secondary">
-//               {t('newprofile.auth.phoneNumber')}
-//             </Typography>
-//           </Box>
-          
-//           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-//             {t('newprofile.auth.acceptTerms')}
-//           </Typography>
-          
-//           <Button 
-//             variant="contained" 
-//             fullWidth 
-//             size="large"
-//             sx={{ mb: 2 }}
-//           >
-//             {t('newprofile.auth.confirm')}
-//           </Button>
-          
-//           <Button variant="text" fullWidth>
-//             {t('newprofile.auth.loginWithPassword')}
-//           </Button>
-//         </Box>
-//       </DialogContent>
-//     </Dialog>
-//   );
+//     return () => {
+//       isMountedRef.current = false;
+//     };
+//   }, []);
+
+//   // Swiper initialization
+//   useEffect(() => {
+//     if (datePrices.length > 0) {
+//       // کمی تاخیر برای اطمینان از لود شدن DOM
+//       setTimeout(() => {
+//         try {
+//           const swiperEl = document.querySelector('.search-content-swiper');
+//           if (swiperEl) {
+//             const swiper = new Swiper('.search-content-swiper', {
+//               modules: [Navigation],
+//               slidesPerView: 3,
+//               spaceBetween: 10,
+//               navigation: {
+//                 nextEl: '.swiper-button-next',
+//                 prevEl: '.swiper-button-prev',
+//               },
+//               breakpoints: {
+//                 320: {
+//                   slidesPerView: 2,
+//                   spaceBetween: 5
+//                 },
+//                 480: {
+//                   slidesPerView: 3,
+//                   spaceBetween: 8
+//                 },
+//                 768: {
+//                   slidesPerView: 5,
+//                   spaceBetween: 10
+//                 },
+//                 1024: {
+//                   slidesPerView: 7,
+//                   spaceBetween: 15
+//                 }
+//               }
+//             });
+            
+//             swiperRef.current = swiper;
+            
+//             // اسکرول به تاریخ فعال
+//             const activeIndex = datePrices.findIndex(item => item.active);
+//             if (activeIndex !== -1 && swiper) {
+//               swiper.slideTo(activeIndex);
+//             }
+//           }
+//         } catch (error) {
+//           console.error('Error initializing Swiper:', error);
+//         }
+//       }, 500);
+//     }
+//   }, [datePrices]);
+
+//   // تابع تبدیل داده‌های API به فرمت UI
+//   const convertToFlightData = (apiData) => {
+//     if (!apiData || apiData.length === 0) return [];
+    
+//     return apiData.map((flight, index) => {
+//       // تبدیل زمان حرکت به فرمت مناسب
+//       const departureTime = flight.timeMove || '۲۱:۴۰';
+//       const arrivalTime = calculateArrivalTime(departureTime);
+      
+//       // تعیین لوگوی شرکت
+//       const getCompanyLogo = (companyName) => {
+//         // if (companyName?.includes('آتا')) return './img/pages/search/logos/ata-sm.png';
+//         // if (companyName?.includes('فلای')) return './img/pages/search/logos/flypersia-sm.png';
+//         // if (companyName?.includes('تابان')) return './img/pages/search/logos/taban-sm.png';
+//         // if (companyName?.includes('کارون')) return './img/pages/search/logos/karun-sm.png';
+//         // if (companyName?.includes('آسمان')) return './img/pages/search/logos/aseman-sm.png';
+//         // if (companyName?.includes('ساها')) return './img/pages/search/logos/saha-sm.png';
+//         return './img/logo-m.png';
+//       };
+      
+//       return {
+//         id: flight.busCode || `flight-${index}`,
+//         companyName: flight.companyName || 'آتا',
+//         companyLogo: getCompanyLogo(flight.companyName),
+//         busCode: flight.busCode || `BUS${index + 1000}`,
+//         originCity: flight.originCity || userData?.[0]?.StartPlaceName || 'تهران',
+//         destinationCity: flight.destinationCity || userData?.[0]?.EndPlaceName || 'شیراز',
+//         timeMove: departureTime,
+//         arrivalTime: arrivalTime,
+//         price: flight.price ? flight.price.toLocaleString() : '۱,۳۰۰,۰۰۰',
+//         countFreeChairs: flight.countFreeChairs || Math.floor(Math.random() * 5) + 1,
+//         carType: flight.carType || 'اتوبوس VIP',
+//         classType: flight.classType || 'اکونومی',
+//         ticketType: flight.ticketType || 'سیستمی',
+//         luggage: flight.luggage || '20 کیلوگرم',
+//         originTerminal: flight.originTerminal || 'ترمینال اصلی',
+//         destinationTerminal: flight.destinationTerminal || 'ترمینال اصلی',
+//         flightNumber: flight.busCode || `BUS${index + 1000}`,
+//         moveDateTime: flight.moveDateTime,
+//         description: flight.description,
+//         sourceCode: flight.sourceCode
+//       };
+//     });
+//   };
+
+//   // محاسبه زمان رسیدن
+//   const calculateArrivalTime = (departureTime) => {
+//     if (!departureTime) return '۲۳:۴۰';
+//     try {
+//       const [hours, minutes] = departureTime.split(':').map(num => parseInt(num, 10));
+//       if (isNaN(hours) || isNaN(minutes)) return '۲۳:۴۰';
+      
+//       // اضافه کردن 2 ساعت برای سفر اتوبوس
+//       let arrivalHours = hours + 2;
+//       if (arrivalHours >= 24) arrivalHours -= 24;
+      
+//       // تبدیل به فرمت فارسی
+//       const persianHours = arrivalHours.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+//       const persianMinutes = minutes.toString().padStart(2, '0').replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      
+//       return `${persianHours}:${persianMinutes}`;
+//     } catch (e) {
+//       console.error('Error calculating arrival time:', e);
+//       return '۲۳:۴۰';
+//     }
+//   };
+
+//   // تابع کلیک روی انتخاب پرواز
+//   const handleSelectFlight = (flight) => {
+//     console.log('Selecting flight:', flight);
+    
+//     const busInfo = {
+//       busCode: flight.busCode,
+//       companyName: flight.companyName,
+//       carType: flight.carType,
+//       originCity: flight.originCity,
+//       destinationCity: flight.destinationCity,
+//       originTerminal: flight.originTerminal,
+//       destinationTerminal: flight.destinationTerminal,
+//       timeMove: flight.timeMove,
+//       price: flight.price.replace(/,/g, ''),
+//       countFreeChairs: flight.countFreeChairs,
+//       description: flight.description,
+//       moveDateTime: flight.moveDateTime,
+//       sourceCode: flight.sourceCode,
+//       userStartPlaceCode: userData?.[0]?.StartPlaceCode,
+//       userToken: userData?.[0]?.Token,
+//       requestNumber: flightData?.requestNumber
+//     };
+    
+//     console.log('Saving bus info:', busInfo);
+//     localStorage.setItem('selectedBusInfo', JSON.stringify(busInfo));
+    
+//     navigate('/OrderPage');
+//   };
+
+//   // داده‌های تبدیل شده
+//   const flights = convertToFlightData(flightData?.searchItems || []);
 
 //   return (
-//     <Box sx={{ 
-//       minHeight: '100vh', 
-//       bgcolor: 'background.default',
-//       direction: 'rtl'
-//     }}>
+//     <div dir="rtl" lang="fa" data-bs-theme={darkMode ? 'dark' : 'light'}>
+//       {/* Offcanvas Menu */}
+//       <div className="offcanvas offcanvas-start" id="offcanvasMenu" tabIndex="-1" aria-labelledby="offcanvasMenuLabel">
+//         <div className="offcanvas-header">
+//           <h5 className="offcanvas-title text-muted" id="offcanvasMenuLabel">منو کاربری</h5>
+//           <button className="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+//         </div>
+//         <div className="offcanvas-body">
+//           <div className="h-100 nt-flex-column">
+//             <div className="w-100 flex-grow-1">
+//               <div className="nt-flex-between-center gap-2 mb-4">
+//                 <div className="nt-flex-start-center">
+//                   <img src="./img/logo-m.png" alt="پرتو سیر" width="80"/>
+//                 </div>
+//                 <button className="btnSwitch btn btn-lg btn-light" type="button" onClick={() => setDarkMode(!darkMode)} aria-label="تغییر حالت روشن و تاریک سایت">
+//                   <i className={`ti ti-${darkMode ? 'moon' : 'sun'} fs-5`} aria-hidden="true"></i>
+//                 </button>
+//               </div>
+//               <div className="accordion accordion-flush" id="accordionOffcanvasMenu">
+//                 <div className="accordion-item">
+//                   <h2 className="accordion-header">
+//                     <button className="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#accordionOffcanvasMenu1" aria-expanded="false" aria-controls="accordionOffcanvasMenu1">خدمات سفر</button>
+//                   </h2>
+//                   <div className="accordion-collapse collapse" id="accordionOffcanvasMenu1" data-bs-parent="#accordionOffcanvasMenu">
+//                     <div className="accordion-body">
+//                       <ul className="list-unstyled nt-flex-column">
+//                         <li><a className="btn btn-link link-dark fs-5" href="./index.html"><i className="ti ti-bus fs-4" aria-hidden="true"></i>اتوبوس</a></li>
+//                         <li><a className="btn btn-link link-dark fs-5" href="./booking-taxi.html"><i className="ti ti-car fs-4" aria-hidden="true"></i>تاکسی</a></li>
+//                         <li><a className="btn btn-link link-dark fs-5" href="./booking-van.html"><i className="ti ti-rv-truck fs-4" aria-hidden="true"></i>ون</a></li>
+//                         <li><a className="btn btn-link link-dark fs-5" href="./booking-bar.html"><i className="ti ti-truck fs-4" aria-hidden="true"></i>باربری</a></li>
+//                       </ul>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//               <nav className="nt-flex-column">
+//                 <a className="btn btn-link link-dark fs-5" href="./about-us.html">درباره ما</a>
+//                 <a className="btn btn-link link-dark fs-5" href="./contact.html">تماس با ما</a>
+//                 <a className="btn btn-link link-dark fs-5" href="./branches.html">ایستگاه ها</a>
+//                 <a className="btn btn-link link-dark fs-5" href="">بلیط های رزرو شده</a>
+//               </nav>
+//             </div>
+//             <div className="w-100 border-top py-3">
+//               <div className="nt-flex-column-center-center">
+//                 <div className="text-muted">پرتو سیر; همراه همیشگی سفرهای شما.</div>
+//                 <div className="nt-flex-start-center text-muted" role="contentinfo" aria-label="اطلاعات حق نشر">
+//                   <span className="visually-hidden">حق نشر ©</span>
+//                   <i className="ti ti-copyright fs-5" aria-hidden="true"></i>
+//                   ۱۴۰۴ پرتو سیر. تمامی حقوق محفوظ است.
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Header Component */}
 //       <Header />
-      
-//       <Container maxWidth="lg" sx={{ py: 3 }}>
-//         <SearchHeader />
+
+//       {/* Main Content */}
+//       <main className="main bg-light">
+//         {/* فاصله بین هدر و بخش جستجو */}
+//         <div style={{ paddingTop: '60px' }}></div>
         
-//         <Grid container spacing={3}>
-//           {/* Sidebar */}
-//           <Grid item xs={12} md={3}>
-//             <FiltersSidebar />
-//           </Grid>
+//         <div className="search-header">
+//           <div 
+//             onClick={() => setSearchExpanded(!searchExpanded)}
+//             style={{ cursor: 'pointer' }}
+//           >
+//             <div className="search-header-content gap-5 p-3">
+//               <div className="nt-flex-start-center gap-1">
+//                 <i className="ti ti-bus fs-5" aria-hidden="true"></i>
+//                 <span>بلیط اتوبوس {userData?.[0]?.StartPlace } به {userData?.[0]?.EndPlace }</span>
+//               </div>
+//               <div className="nt-flex-start-center gap-1">
+//                 <i className="ti ti-calendar-week fs-5" aria-hidden="true"></i>
+//                 <span>{formatPersianDate(selectedDate).fullDate}</span>
+//               </div>
+             
+//               <div className="btn btn-primary">
+//                 <i className="ti ti-search fs-5" aria-hidden="true"></i>
+//               </div>
+//             </div>
+//           </div>
           
-//           {/* Main Content */}
-//           <Grid item xs={12} md={9}>
-//             <DatePriceSlider />
-//             <MainContent />
-//           </Grid>
-//         </Grid>
-//       </Container>
-      
+//           <div className={`collapse ${searchExpanded ? 'show' : ''}`} id="collapseExample">
+//             <div className="card card-body">
+//               <div className="container booking-wrapper bg-transparent pt-4 px-4 mb-0">
+//                 <div className="container mb-5">
+//                   <form className="row g-3 booking-form">
+//                     <div className="col-12">
+//                       <div className="nt-flex gap-3 mb-2">
+                       
+//                       </div>
+//                     </div>
+                    
+//                     <div className="col-12 col-md-5">
+//                       <div className="booking-fromTo">
+//                         <select className="tom-select-header form-select" defaultValue="tehran">
+//                           <option value="">مبدا (شهر)</option>
+//                           <option value="tehran">تهران</option>
+//                           <option value="shiraz">شیراز</option>
+//                           <option value="mashhad">مشهد</option>
+//                         </select>
+//                         <select className="tom-select-header form-select" defaultValue="shiraz">
+//                           <option value="">مقصد (شهر)</option>
+//                           <option value="tehran">تهران</option>
+//                           <option value="shiraz">شیراز</option>
+//                           <option value="mashhad">مشهد</option>
+//                         </select>
+//                       </div>
+//                     </div>
+                    
+//                     <div className="col-12 col-md-3">
+//                       <div className="booking-departureReturn">
+//                         <input className="form-control" type="text" placeholder="تاریخ رفت" defaultValue={formatPersianDate(selectedDate).fullDate}/>
+//                         {/* <input className="form-control" type="text" placeholder="تاریخ برگشت" disabled/> */}
+//                       </div>
+//                     </div>
+                    
+                 
+                    
+//                     <div className="col-6 col-md-2">
+//                       <button className="btn btn-primary booking-submit" type="button">
+//                         جستجو<i className="ti ti-search fs-5" aria-hidden="true"></i>
+//                       </button>
+//                     </div>
+//                   </form>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* نتایج جستجو */}
+//         <div className="container py-4 mb-5">
+//           <div className="row g-4">
+//             {/* محتوای اصلی - بدون سایدبار */}
+//             <div className="col-12">
+//               <div className="search-content">
+//                 {/* اسلایدر تاریخ‌ها */}
+//                 <div className="swiper search-content-swiper mb-4">
+//                   <div className="swiper-wrapper">
+//                     {datePrices.map((dateItem, index) => (
+//                       <div className="swiper-slide" key={index}>
+//                         <a 
+//                           className={`link py-2 ${dateItem.active ? 'active' : ''}`}
+//                           onClick={(e) => {
+//                             e.preventDefault();
+//                             !dateItem.isPast && handleDateClick(dateItem.dateObj, dateItem);
+//                           }}
+//                           href=""
+//                           style={{ 
+//                             display: 'flex',
+//                             flexDirection: 'column',
+//                             alignItems: 'center',
+//                             justifyContent: 'center',
+//                             minHeight: '70px',
+//                             textDecoration: 'none',
+//                             cursor: dateItem.isPast ? 'not-allowed' : 'pointer',
+//                             opacity: dateItem.isPast ? 0.6 : 1,
+//                             borderBottom: dateItem.active ? '2px solid #198754' : 'none',
+//                             padding: '8px 5px',
+//                           }}
+//                         >
+//                           <div className="text-muted" style={{ 
+//                             fontSize: '14px',
+//                             color: dateItem.isPast ? '#adb5bd' : '#6c757d'
+//                           }}>
+//                             {dateItem.date}
+//                           </div>
+                          
+//                           {dateItem.isToday && !dateItem.active && (
+//                             <div className="badge bg-warning text-dark mt-2" style={{
+//                               fontSize: '11px',
+//                               padding: '2px 6px',
+//                               borderRadius: '10px'
+//                             }}>
+//                               امروز
+//                             </div>
+//                           )}
+//                         </a>
+//                       </div>
+//                     ))}
+//                   </div>
+//                   {/* دکمه‌های ناوبری Swiper */}
+//                   <div className="swiper-button-next" style={{ color: '#0d6efd' }}></div>
+//                   <div className="swiper-button-prev" style={{ color: '#0d6efd' }}></div>
+//                 </div>
+                
+//                 <div className="nt-flex-start-center gap-2 text-muted mb-4">
+//                   <i className="ti ti-info-circle fs-5" aria-hidden="true"></i>
+//                   نرخ‌ها برای هر فرد بزرگسال در نظر گرفته شده است.
+//                 </div>
+                
+//                 {/* فیلتر مرتب‌سازی */}
+//                 <div className="bg-white text-muted border rounded mb-4">
+//                   <div className="search-content-filter gap-4 p-3">
+//                     <div className="text-muted">مرتب سازی:</div>
+//                     <nav className="nt-flex-start-center flex-nowrap flex-grow-1">
+//                       <button 
+//                         className={`btn btn-link ${activeSort === 'recommended' ? 'active' : ''}`}
+//                         onClick={() => setActiveSort('recommended')}
+//                       >پیشنهادی</button>
+//                       <button 
+//                         className={`btn btn-link ${activeSort === 'earliest' ? 'active' : ''}`}
+//                         onClick={() => setActiveSort('earliest')}
+//                       >زودترین</button>
+//                       <button 
+//                         className={`btn btn-link ${activeSort === 'latest' ? 'active' : ''}`}
+//                         onClick={() => setActiveSort('latest')}
+//                       >دیرترین</button>
+//                       <button 
+//                         className={`btn btn-link ${activeSort === 'cheapest' ? 'active' : ''}`}
+//                         onClick={() => setActiveSort('cheapest')}
+//                       >ارزان‌ترین</button>
+//                       <button 
+//                         className={`btn btn-link ${activeSort === 'mostExpensive' ? 'active' : ''}`}
+//                         onClick={() => setActiveSort('mostExpensive')}
+//                       >گران‌ترین</button>
+//                     </nav>
+//                   </div>
+                  
+//                   {/* لیست اتوبوس‌ها */}
+//                   <ul className="search-content-lists p-3 bg-light-subtle">
+//                     {loading ? (
+//                       <li className="search-content-item container bg-white">
+//                         <div className="text-center p-5">
+//                           <div className="spinner-border text-primary" role="status">
+//                             <span className="visually-hidden">در حال بارگذاری...</span>
+//                           </div>
+//                           <div className="mt-3">در حال بارگذاری نتایج...</div>
+//                         </div>
+//                       </li>
+//                     ) : flights.length > 0 ? (
+//                       flights.map((flight) => {
+//                         const isExpanded = expandedFlightId === flight.id;
+//                         const currentTab = activeFlightTab[flight.id] || 0;
+                        
+//                         return (
+//                           <li className="search-content-item container bg-white" key={flight.id} style={{ marginBottom: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+//                             <div className="row">
+//                               {/* اطلاعات اتوبوس */}
+//                               <div className="col-12 col-md-9 nt-flex-column">
+//                                 <div className="w-100 flex-grow-1 row align-items-center p-4">
+//                                   {/* لوگو شرکت - دسکتاپ */}
+//                                   <div className="col-2 d-none d-md-block">
+//                                     <div className="nt-flex-center-center flex-md-column gap-3">
+//                                       <img src={flight.companyLogo} alt={flight.companyName} width="70" style={{ borderRadius: '5px' }}/>
+//                                       <div className="fs-5">{flight.companyName}</div>
+//                                     </div>
+//                                   </div>
+                                  
+//                                   {/* لوگو شرکت - موبایل */}
+//                                   <div className="col-2 d-md-none">
+//                                     <div className="nt-flex-center-center flex-md-column gap-3">
+//                                       <img src={flight.companyLogo} alt={flight.companyName} width="50" style={{ borderRadius: '5px' }}/>
+//                                       <div className="fs-6">{flight.companyName}</div>
+//                                     </div>
+//                                   </div>
+                                  
+//                                   {/* اطلاعات پرواز */}
+//                                   <div className="col-10 col-md-10 nt-flex-column gap-4 flex-nowrap">
+//                                     <div className="w-100 nt-flex-start-center flex-nowrap">
+//                                       <div className="badge bg-light text-light-emphasis" style={{ backgroundColor: '#e8f5e8', color: '#2e7d32' }}>
+//                                         {flight.carType}
+//                                       </div>
+//                                     </div>
+                                    
+//                                     <div className="w-100 row align-items-center">
+//                                       {/* مبدا */}
+//                                       <div className="col-4 col-md-4 fs-4 nt-flex gap-2 flex-column">
+//                                         <div className="d-none d-md-block" style={{ fontSize: '14px', color: '#666' }}>{flight.originCity}</div>
+//                                         <div className="small text-muted">{flight.originTerminal}</div>
+//                                       </div>
+                                      
+//                                       {/* مسیر و زمان */}
+//                                       <div className="col-4 col-md-4">
+//                                         <div className="nt-PathVisualizer reversed-icon" style={{ position: 'relative', height: '50px' }}>
+//                                           <div className="nt-PathVisualizer-line" style={{ height: '2px', backgroundColor: '#dee2e6', position: 'absolute', top: '50%', left: '0', right: '0', transform: 'translateY(-50%)' }}></div>
+//                                           <div className="text-center" style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: 'white', padding: '5px 15px', borderRadius: '20px', border: '1px solid #dee2e6' }}>
+//                                             <div className="d-flex align-items-center gap-2">
+//                                               <i className="ti ti-bus fs-5 text-primary" aria-hidden="true"></i>
+//                                               <div className="fw-bold" style={{ fontSize: '18px' }}>{flight.timeMove}</div>
+//                                             </div>
+//                                           </div>
+//                                         </div>
+//                                       </div>
+                                      
+//                                       {/* مقصد */}
+//                                       <div className="col-4 col-md-4 fs-4 nt-flex gap-2 flex-column align-items-end">
+//                                         <div className="d-none d-md-block" style={{ fontSize: '14px', color: '#666' }}>{flight.destinationCity}</div>
+//                                         <div className="small text-muted text-end">{flight.destinationTerminal}</div>
+//                                       </div>
+//                                     </div>
+//                                   </div>
+//                                 </div>
+                                
+//                                 {/* تب‌های اطلاعات */}
+//                                 {isExpanded && (
+//                                   <div className="w-100 p-3 border-top">
+//                                     <ul className="nav nav-pills gap-4 mb-3" role="tablist">
+//                                       <li className="nav-item" role="presentation">
+//                                         <button 
+//                                           className={`nav-link ${currentTab === 0 ? 'active' : ''}`}
+//                                           type="button"
+//                                           onClick={() => handleTabChange(flight.id, 0)}
+//                                         >
+//                                           اطلاعات اتوبوس
+//                                         </button>
+//                                       </li>
+//                                       <li className="nav-item" role="presentation">
+//                                         <button 
+//                                           className={`nav-link ${currentTab === 1 ? 'active' : ''}`}
+//                                           type="button"
+//                                           onClick={() => handleTabChange(flight.id, 1)}
+//                                         >
+//                                           قوانین استرداد
+//                                         </button>
+//                                       </li>
+//                                     </ul>
+                                    
+//                                     {/* اطلاعات اتوبوس */}
+//                                     {currentTab === 0 && (
+//                                       <div className="tab-pane fade show active">
+//                                         <div className="container p-4">
+//                                           <div className="row g-4">
+//                                             <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">شماره اتوبوس</div>
+//                                                 <div className="fw-bold">{flight.busCode}</div>
+//                                               </div>
+//                                             </div>
+//                                             {/* <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">کلاس</div>
+//                                                 <div className="fw-bold">{flight.classType}</div>
+//                                               </div>
+//                                             </div> */}
+//                                             <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">نوع اتوبوس</div>
+//                                                 <div className="fw-bold">{flight.carType}</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">بار مجاز</div>
+//                                                 <div className="fw-bold">{flight.luggage}</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">ترمینال مبدا</div>
+//                                                 <div className="fw-bold">{flight.originTerminal}</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-4">
+//                                               <div className="nt-flex-column gap-1">
+//                                                 <div className="small text-muted">ترمینال مقصد</div>
+//                                                 <div className="fw-bold">{flight.destinationTerminal}</div>
+//                                               </div>
+//                                             </div>
+//                                           </div>
+//                                         </div>
+//                                       </div>
+//                                     )}
+                                    
+//                                     {/* قوانین استرداد */}
+//                                     {currentTab === 1 && (
+//                                       <div className="tab-pane fade">
+//                                         <div className="container">
+//                                           <div className="row">
+//                                             <div className="col-12">
+//                                               <div className="nt-flex-start-center gap-2 p-4">
+//                                                 <i className="ti ti-info-circle fs-5" aria-hidden="true"></i>
+//                                                 <div className="nt-flex-start-center gap-3 text-muted">
+//                                                   درصد جریمه کسر شده بر اساس زمان اعلام کنسلی
+//                                                   <a className="link-dark" href=""> قوانین استرداد </a>
+//                                                 </div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-3">
+//                                               <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+//                                                 <div className="fs-5 text-danger">30%</div>
+//                                                 <div className="text-dark small">تا ۳ روز قبل از حرکت</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-3">
+//                                               <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+//                                                 <div className="fs-5 text-danger">50%</div>
+//                                                 <div className="text-dark small">تا ۱ روز قبل از حرکت</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-3">
+//                                               <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+//                                                 <div className="fs-5 text-danger">70%</div>
+//                                                 <div className="text-dark small">تا ۴ ساعت قبل از حرکت</div>
+//                                               </div>
+//                                             </div>
+//                                             <div className="col-6 col-md-3">
+//                                               <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+//                                                 <div className="fs-5 text-danger">80%</div>
+//                                                 <div className="text-dark small">کمتر از ۴ ساعت</div>
+//                                               </div>
+//                                             </div>
+//                                           </div>
+//                                         </div>
+//                                       </div>
+//                                     )}
+//                                   </div>
+//                                 )}
+                                
+//                                 {/* دکمه نمایش/مخفی کردن اطلاعات */}
+//                                 <div className="w-100 p-3 border-top text-center">
+//                                   <button 
+//                                     className="btn btn-link"
+//                                     onClick={() => toggleFlightTabs(flight.id)}
+//                                   >
+//                                     <i className={`ti ti-chevron-${isExpanded ? 'up' : 'down'} me-2`}></i>
+//                                     {isExpanded ? 'مشاهده کمتر' : 'مشاهده جزئیات بیشتر'}
+//                                   </button>
+//                                 </div>
+//                               </div>
+                              
+//                               {/* قیمت و انتخاب - دسکتاپ */}
+//                               <div className="col-12 col-md-3 d-none d-md-block search-content-dividerY">
+//                                 <div className="nt-flex-column-center-center gap-3 px-3 py-5">
+//                                   <div className="nt-flex-start-center gap-2">
+//                                     <div className="fs-4 text-info fw-bold">{flight.price}</div>
+//                                     <div className="small text-muted">تومان</div>
+//                                   </div>
+//                                   <div className="fw-bold">نرخ رسمی شرکت</div>
+                                  
+//                                   <button 
+//                                     className="btn btn-primary w-100" 
+//                                     type="button"
+//                                     onClick={() => handleSelectFlight(flight)}
+//                                     style={{ padding: '10px', fontSize: '16px' }}
+//                                   >
+//                                     <i className="ti ti-ticket fs-5 me-2" aria-hidden="true"></i>
+//                                     انتخاب اتوبوس
+//                                   </button>
+                                  
+//                                   <div className={`small ${flight.countFreeChairs > 3 ? 'text-success' : 'text-danger'}`}>
+//                                     {flight.countFreeChairs} صندلی باقی مانده
+//                                   </div>
+                                  
+//                                   <div className="search-content-total py-4 w-100">
+//                                     <div className="p-2 text-muted nt-flex-between-center border-bottom">
+//                                       <span>بزرگسال</span>
+//                                       <span className="nt-flex gap-1">
+//                                         {flight.price}
+//                                         <div className="small">تومان</div>
+//                                       </span>
+//                                     </div>
+//                                     <div className="p-2 text-muted nt-flex-between-center">
+//                                       <span>مجموع</span>
+//                                       <span className="nt-flex gap-1">
+//                                         {flight.price}
+//                                         <div className="small">تومان</div>
+//                                       </span>
+//                                     </div>
+//                                   </div>
+//                                 </div>
+//                               </div>
+                              
+//                               {/* قیمت و انتخاب - موبایل */}
+//                               <div className="col-12 col-md-3 d-md-none search-content-dividerX">
+//                                 <div className="row align-items-center py-3 border-top">
+//                                   <div className="col-6">
+//                                     <div className="nt-flex-column gap-2">
+//                                       <div className="nt-flex-start-center gap-2">
+//                                         <div className="fs-4 text-info fw-bold">{flight.price}</div>
+//                                         <div className="small text-muted">تومان</div>
+//                                       </div>
+//                                       <div className="fw-bold small">نرخ رسمی شرکت</div>
+//                                       <div className={`small ${flight.countFreeChairs > 3 ? 'text-success' : 'text-danger'}`}>
+//                                         {flight.countFreeChairs} صندلی باقی مانده
+//                                       </div>
+//                                     </div>
+//                                   </div>
+//                                   <div className="col-6">
+//                                     <button 
+//                                       className="btn btn-primary w-100" 
+//                                       type="button"
+//                                       onClick={() => handleSelectFlight(flight)}
+//                                     >
+//                                       <i className="ti ti-ticket fs-5 me-2" aria-hidden="true"></i>
+//                                       انتخاب
+//                                     </button>
+//                                   </div>
+//                                   <div className="col-12 mt-3">
+//                                     <div className="search-content-total py-3 border-top">
+//                                       <div className="p-2 text-muted nt-flex-between-center border-bottom">
+//                                         <span>بزرگسال</span>
+//                                         <span className="nt-flex gap-1">
+//                                           {flight.price}
+//                                           <div className="small">تومان</div>
+//                                         </span>
+//                                       </div>
+//                                       <div className="p-2 text-muted nt-flex-between-center">
+//                                         <span>مجموع</span>
+//                                         <span className="nt-flex gap-1">
+//                                           {flight.price}
+//                                           <div className="small">تومان</div>
+//                                         </span>
+//                                       </div>
+//                                     </div>
+//                                   </div>
+//                                 </div>
+//                               </div>
+//                             </div>
+//                           </li>
+//                         );
+//                       })
+//                     ) : (
+//                       <li className="search-content-item container bg-white">
+//                         <div className="text-center p-5">
+//                           <i className="ti ti-bus-off fs-1 text-muted mb-3" aria-hidden="true"></i>
+//                           <div className="fs-5 text-muted">اتوبوسی برای این تاریخ یافت نشد</div>
+//                           <div className="mt-3">
+//                             <button className="btn btn-primary" onClick={() => setSearchExpanded(true)}>
+//                               <i className="ti ti-search me-2" aria-hidden="true"></i>
+//                               تغییر تاریخ یا مسیر
+//                             </button>
+//                           </div>
+//                         </div>
+//                       </li>
+//                     )}
+//                   </ul>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </main>
+
+//       {/* Footer */}
 //       <Footer />
-//       <AuthModal />
-//     </Box>
+//     </div>
 //   );
-// };
+// }
 
 // export default SearchPage;
 
-
-
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  Paper,
-  useTheme,
-  useMediaQuery,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormControlLabel,
-  Checkbox,
-  Chip,
-  Tabs,
-  Tab,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Slider,
-  Badge,
-  CircularProgress,
-  Stack,
-  Skeleton
-} from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Close as CloseIcon,
-  Person as PersonIcon,
-  Brightness4 as DarkIcon,
-  Brightness7 as LightIcon,
-  Phone as PhoneIcon,
-  Telegram as TelegramIcon,
-  Twitter as TwitterIcon,
-  YouTube as YouTubeIcon,
-  Instagram as InstagramIcon,
-  LinkedIn as LinkedInIcon,
-  Search as SearchIcon,
-  ExpandMore as ExpandMoreIcon,
-  AirportShuttle as FlightIcon,
-  CalendarToday as CalendarIcon,
-  People as PeopleIcon,
-  Info as InfoIcon,
-  FilterAlt as FilterIcon,
-  Sort as SortIcon,
-  ConfirmationNumber as TicketIcon
-} from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import Header from '../../components/home/Header';
+import Footer from '../../components/home/Footer';
+import UserContext from './../../UserContext';
+import { BusSearch, GetCities } from '../../Api/ApiMaster';
+import moment from 'moment-jalaali';
+import Swiper from 'swiper';
+import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import moment from 'moment-jalaali';
-import UserContext from './../../UserContext';
-import { BusSearch } from '../../Api/ApiMaster';
-import NoResultsFound from '../../components/NoResultsFound';
-import getTheme from '../../theme';
 
+// ایمپورت MUI کامپوننت‌های تاریخ شمسی
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFnsJalali } from '@mui/x-date-pickers/AdapterDateFnsJalali';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TextField } from '@mui/material';
 
-const SearchPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const theme = getTheme(i18n.language);
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isPersian = ['fa', 'ar', 'pa'].includes(i18n.language);
-  const isRTL = isPersian;
-
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const [signModalOpen, setSignModalOpen] = useState(false);
+function SearchPage() {
   const [darkMode, setDarkMode] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [datePrices, setDatePrices] = useState([]);
+  const [flightData, setFlightData] = useState({ searchItems: [], totalCount: 0 });
+  const [loading, setLoading] = useState(false);
+  const [activeSort, setActiveSort] = useState('recommended');
+  const [expandedFlightId, setExpandedFlightId] = useState(null);
+  const [activeFlightTab, setActiveFlightTab] = useState({});
   const [passengers, setPassengers] = useState({
-    adults: 1,
+    adults: 0,
     children: 0,
     infants: 0
   });
-  const [activeSort, setActiveSort] = useState('recommended');
-  const [activeFlightTab, setActiveFlightTab] = useState(0);
-  
-  // State from old code
-  const { userData, setUserData } = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
-  const [flightData, setFlightData] = useState<any>({ searchItems: [], totalCount: 0 });
-  const [datePrices, setDatePrices] = useState<any[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  
-  // Ref برای پیگیری آخرین تاریخ لود شده
-  const lastFetchedDateRef = useRef<string>('');
-  const isMountedRef = useRef(true);
+  const [totalTravelers, setTotalTravelers] = useState(0);
+  const [cityList, setCityList] = useState([]);
+  const [citiesLoading, setCitiesLoading] = useState(true);
 
-  // API call function
-  const fetchFlights = useCallback(async (date: Date) => {
+  const { userData, setUserData } = useContext(UserContext);
+  const navigate = useNavigate();
+  const lastFetchedDateRef = useRef('');
+  const isMountedRef = useRef(true);
+  const swiperRef = useRef(null);
+  const originSelectRef = useRef(null);
+  const destinationSelectRef = useRef(null);
+  let originTomSelect = null;
+  let destinationTomSelect = null;
+
+  // شهرهای پیش‌فرض
+  // const defaultCities = [
+  //   { code: '1', name_fa: 'تهران', name_en: 'Tehran' },
+  //   { code: '2', name_fa: 'اهواز', name_en: 'Ahvaz' },
+  //   { code: '3', name_fa: 'شیراز', name_en: 'Shiraz' },
+  //   { code: '4', name_fa: 'مشهد', name_en: 'Mashhad' },
+  //   { code: '5', name_fa: 'بندر عباس', name_en: 'Bandar Abbas' },
+  //   { code: '6', name_fa: 'اصفهان', name_en: 'Isfahan' },
+  //   { code: '7', name_fa: 'تبریز', name_en: 'Tabriz' },
+  //   { code: '8', name_fa: 'کیش', name_en: 'Kish' },
+  //   { code: '9', name_fa: 'رشت', name_en: 'Rasht' },
+  //   { code: '10', name_fa: 'کرج', name_en: 'Karaj' },
+  //   { code: '11', name_fa: 'قم', name_en: 'Qom' },
+  //   { code: '12', name_fa: 'کرمان', name_en: 'Kerman' },
+  //   { code: '13', name_fa: 'یزد', name_en: 'Yazd' },
+  //   { code: '14', name_fa: 'اردبیل', name_en: 'Ardabil' },
+  //   { code: '15', name_fa: 'زاهدان', name_en: 'Zahedan' },
+  //   { code: '16', name_fa: 'همدان', name_en: 'Hamedan' },
+  //   { code: '17', name_fa: 'ساری', name_en: 'Sari' },
+  //   { code: '18', name_fa: 'بوشهر', name_en: 'Bushehr' },
+  //   { code: '19', name_fa: 'ارومیه', name_en: 'Urmia' },
+  //   { code: '20', name_fa: 'قزوین', name_en: 'Qazvin' }
+  // ];
+
+  // تابع برای به‌روزرسانی userData (مشابه کد APP)
+  const updateUserData = useCallback((updates) => {
+    const currentDate = new Date().toISOString();
+    
+    let newUserData;
     if (!userData || userData.length === 0) {
-      console.log('User data not available yet');
+      newUserData = [{
+        radioType: '1',
+        CurrentDate: currentDate,
+        Token: '',
+        StartPlace: '',
+        StartPlaceCode: '',
+        EndPlace: '',
+        EndPlaceCode: '',
+        DepartureDate: selectedDate ? selectedDate.toISOString() : null,
+        Passengers: {
+          adults: 0,
+          children: 0,
+          infants: 0
+        }
+      }];
+    } else {
+      newUserData = [...userData];
+    }
+    
+    newUserData[0] = {
+      ...newUserData[0],
+      ...updates,
+      CurrentDate: currentDate
+    };
+    
+    setUserData(newUserData);
+    localStorage.setItem('storageData', JSON.stringify(newUserData));
+    
+    console.log('UserData updated:', newUserData[0]);
+    
+    return newUserData[0];
+  }, [userData, setUserData, selectedDate]);
+
+  // دریافت لیست شهرها از API
+  useEffect(() => {
+    const fetchCities = () => {
+      setCitiesLoading(true);
+      const headers = {
+        'accept': 'text/plain',
+        "Access-Control-Allow-Origin": "*",
+        'Authorization': userData[0]?.Token || ''
+      };
+
+      GetCities(setCityList, cityList, {}, setCitiesLoading, { headers });
+    };
+
+    if (userData[0]?.Token === "" || userData[0]?.Token == null) {
+      setTimeout(fetchCities, 1000);
+    } else {
+      fetchCities();
+    }
+  }, []);
+
+  // Initialize tom-select برای شهرها
+  const initializeTomSelect = () => {
+    if (window.TomSelect && originSelectRef.current && destinationSelectRef.current) {
+      const cities = cityList.length > 0 ? cityList : [];
+
+      // شهر مبدا
+      originTomSelect = new window.TomSelect(originSelectRef.current, {
+        valueField: 'code',
+        labelField: 'name_fa',
+        searchField: ['name_fa'],
+        options: cities.map(city => ({
+          code: city.code,
+          name_fa: city.name_fa
+        })),
+        create: false,
+        maxOptions: 50,
+        plugins: ['clear_button'],
+        render: {
+          option: function(data, escape) {
+            return `<div>${escape(data.name_fa)}</div>`;
+          },
+          item: function(data, escape) {
+            return `<div>${escape(data.name_fa)}</div>`;
+          }
+        },
+        onChange: function(value) {
+          const selectedCity = cities.find(city => city.code === value);
+          if (selectedCity) {
+            const updatedData = updateUserData({
+              StartPlace: selectedCity.name_fa,
+              StartPlaceCode: selectedCity.code,
+              // StartPlaceName: selectedCity.name_fa  // اضافه کردن نام شهر هم
+            });
+            console.log('Origin changed to:', selectedCity.name_fa, 'Code:', selectedCity.code);
+            console.log('Current userData:', updatedData);
+          }
+        },
+        onLoad: function() {
+          // تنظیم مقدار اولیه از userData
+          if (userData[0]?.StartPlaceCode) {
+            this.setValue(userData[0].StartPlaceCode);
+          }
+        }
+      });
+
+      // شهر مقصد
+      destinationTomSelect = new window.TomSelect(destinationSelectRef.current, {
+        valueField: 'code',
+        labelField: 'name_fa',
+        searchField: ['name_fa'],
+        options: cities.map(city => ({
+          code: city.code,
+          name_fa: city.name_fa
+        })),
+        create: false,
+        maxOptions: 50,
+        plugins: ['clear_button'],
+        render: {
+          option: function(data, escape) {
+            return `<div>${escape(data.name_fa)}</div>`;
+          },
+          item: function(data, escape) {
+            return `<div>${escape(data.name_fa)}</div>`;
+          }
+        },
+        onChange: function(value) {
+          const selectedCity = cities.find(city => city.code === value);
+          if (selectedCity) {
+            const updatedData = updateUserData({
+              EndPlace: selectedCity.name_fa,
+              EndPlaceCode: selectedCity.code,
+              // EndPlaceName: selectedCity.name_fa  // اضافه کردن نام شهر هم
+            });
+            console.log('Destination changed to:', selectedCity.name_fa, 'Code:', selectedCity.code);
+            console.log('Current userData:', updatedData);
+          }
+        },
+        onLoad: function() {
+          // تنظیم مقدار اولیه از userData
+          if (userData[0]?.EndPlaceCode) {
+            this.setValue(userData[0].EndPlaceCode);
+          }
+        }
+      });
+
+      // تنظیم مقادیر اولیه از userData اگر وجود داشته باشد
+      setTimeout(() => {
+        if (userData[0]?.StartPlaceCode && originTomSelect) {
+          originTomSelect.setValue(userData[0].StartPlaceCode, true); // true برای silent
+        }
+        if (userData[0]?.EndPlaceCode && destinationTomSelect) {
+          destinationTomSelect.setValue(userData[0].EndPlaceCode, true); // true برای silent
+        }
+      }, 100);
+    }
+  };
+
+  // تابع جستجو
+  const handleSearch = (e) => {
+    if (e) e.preventDefault();
+    
+    console.log('Search clicked. Current userData:', userData[0]);
+    
+    if (!userData[0]?.StartPlaceCode || !userData[0]?.EndPlaceCode || !selectedDate) {
+      alert('لطفاً مبدا، مقصد و تاریخ را انتخاب کنید');
+      return;
+    }
+
+    if (userData[0].StartPlaceCode == userData[0].EndPlaceCode) {
+      alert('مبدا و مقصد نمی‌توانند یکسان باشند');
+      return;
+    }
+
+    updateUserData({
+      DepartureDate: selectedDate.toISOString()
+    });
+
+    // فراخوانی API برای جستجو
+
+    fetchFlights(selectedDate);
+  };
+
+  // مدیریت تغییر تاریخ
+  const handleDateChange = (newDate) => {
+    if (newDate) {
+      setSelectedDate(newDate);
+      updateUserData({
+        DepartureDate: newDate.toISOString()
+      });
+    }
+  };
+
+  // محاسبه تعداد کل مسافران
+  useEffect(() => {
+    const total = passengers.adults + passengers.children + passengers.infants;
+    setTotalTravelers(total);
+  }, [passengers]);
+
+  // تابع برای فرمت تاریخ شمسی
+  const formatPersianDate = (date) => {
+    const persianDayNames = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+    const persianMonthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+    
+    const momentDate = moment(date);
+    const dayOfWeek = momentDate.day();
+    const day = momentDate.format('jD');
+    const month = persianMonthNames[parseInt(momentDate.format('jM')) - 1];
+    const persianDayName = persianDayNames[dayOfWeek];
+    
+    return {
+      fullDate: `${persianDayName} ${day} ${month}`,
+      shortDate: `${persianDayName} - ${momentDate.format('jDD/jMM')}`,
+      dayName: persianDayName,
+      dayNumber: day,
+      monthName: month
+    };
+  };
+
+  // تولید آرایه تاریخ‌ها برای اسلایدر
+  const generateDateArray = useCallback((baseDate) => {
+    const dates = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      const persianDate = formatPersianDate(date);
+      const isToday = moment(date).isSame(today, 'day');
+      const isSelected = moment(date).isSame(baseDate, 'day');
+      const isPast = date < today;
+      
+      const randomPrice = Math.floor(Math.random() * 300000) + 1000000;
+      
+      dates.push({
+        date: persianDate.shortDate,
+        dateObj: date,
+        active: isSelected,
+        rawDate: date,
+        isToday: isToday,
+        isPast: isPast,
+        price: randomPrice.toLocaleString()
+      });
+    }
+    
+    return dates.sort((a, b) => a.dateObj - b.dateObj);
+  }, []);
+
+  // تابع برای فراخوانی API
+  const fetchFlights = useCallback(async (date) => {
+    if (!userData || userData.length === 0) {
+      console.log('No user data available');
       return;
     }
 
     const dateString = moment(date).format('jYYYY-jMM-jDD');
     
-    // اگر همین تاریخ قبلاً لود شده، دوباره لود نکن
-    if (lastFetchedDateRef.current === dateString) {
-      console.log('Already fetched data for this date:', dateString);
-      return;
-    }
+    // if (lastFetchedDateRef.current == dateString) {
+    //   console.log('Already fetched data for this date');
+    //   return;
+    // }
 
     console.log('Fetching flights for date:', dateString);
-    
+    console.log('Using userData:', userData[0]);
+    setFlightData({ searchItems: [], totalCount: 0 })
     try {
       setLoading(true);
       lastFetchedDateRef.current = dateString;
@@ -974,6 +1306,15 @@ const SearchPage: React.FC = () => {
           if (isMountedRef.current) {
             console.log('Flight data received:', data);
             setFlightData(data || { searchItems: [], totalCount: 0 });
+            
+            const initialTabs = {};
+            if (data?.searchItems) {
+              data.searchItems.forEach((flight, index) => {
+                const flightId = flight.busCode || `flight-${index}`;
+                initialTabs[flightId] = 0;
+              });
+            }
+            setActiveFlightTab(initialTabs);
           }
         }, 
         setUserData, 
@@ -985,967 +1326,832 @@ const SearchPage: React.FC = () => {
       if (isMountedRef.current) {
         setFlightData({ searchItems: [], totalCount: 0 });
         setLoading(false);
-        lastFetchedDateRef.current = ''; // Reset on error
+        lastFetchedDateRef.current = '';
       }
     }
   }, [userData, setUserData]);
 
-  // Generate simple date array without prices
-  // const generateDateArray = useCallback((baseDate: Date) => {
-  //   const dates = [];
-  //   const today = new Date(baseDate);
-    
-  //   // Generate 7 days starting from today
-  //   for (let i = 0; i < 7; i++) {
-  //     const date = new Date(today);
-  //     date.setDate(today.getDate() + i);
-      
-  //     const formattedDate = isPersian 
-  //       ? moment(date).format('dddd - jDD/jMM')
-  //       : moment(date).locale('en').format('dddd - MM/DD');
-      
-  //     dates.push({
-  //       date: formattedDate,
-  //       dateObj: date,
-  //       active: i === 0
-  //     });
-  //   }
-  //   return dates;
-  // }, [isPersian]);
-
-  const generateDateArray = useCallback((baseDate: Date) => {
-    const dates = [];
-    const today = new Date(baseDate);
-    
-    // Generate 7 days starting from today
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      
-      // Create moment instance for Persian formatting
-      const momentDate = moment(date);
-      
-      // Persian day names mapping
-      const persianDayNames = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
-      
-      // Get the Persian day of week (0 = یکشنبه, 1 = دوشنبه, etc.)
-      // Note: moment(date).day() returns 0 for Sunday, 1 for Monday, etc.
-      // We need to map: 0 -> یکشنبه, 1 -> دوشنبه, etc.
-      const dayOfWeek = momentDate.day(); // 0-6 where 0 is Sunday
-      const persianDayName = persianDayNames[dayOfWeek];
-      
-      // Format the Shamsi date part
-      const shamsiDate = momentDate.format('jDD/jMM');
-      
-      // Final formatted date in Persian
-      const formattedDate = isPersian 
-        ? `${persianDayName} - ${shamsiDate}`
-        : momentDate.locale('en').format('dddd - MM/DD');
-      
-      dates.push({
-        date: formattedDate,
-        dateObj: date,
-        active: i === 0
-      });
+  // تابع toggle کردن تب‌های اطلاعات
+  const toggleFlightTabs = (flightId) => {
+    setExpandedFlightId(expandedFlightId === flightId ? null : flightId);
+    if (expandedFlightId !== flightId) {
+      setActiveFlightTab(prev => ({
+        ...prev,
+        [flightId]: 0
+      }));
     }
-    return dates;
-  }, [isPersian]);
+  };
 
-  // Handle date slider click
-  const handleDateClick = useCallback(async (dateObj: Date) => {
-    console.log('Date clicked:', dateObj);
+  // تابع تغییر تب برای هر پرواز
+  const handleTabChange = (flightId, tabIndex) => {
+    setActiveFlightTab(prev => ({
+      ...prev,
+      [flightId]: tabIndex
+    }));
+  };
+
+  // تابع کلیک روی تاریخ در اسلایدر
+  const handleDateClick = useCallback(async (dateObj, dateItem) => {
+    if (dateItem.isPast) {
+      console.log('Cannot select past date');
+      return;
+    }
     
-    // Update selected date
+    console.log('Date clicked:', dateObj);
     setSelectedDate(dateObj);
     
-    // Update active date in slider
+    updateUserData({
+      DepartureDate: dateObj.toISOString()
+    });
+    
     setDatePrices(prev => prev.map(item => ({
       ...item,
       active: moment(item.dateObj).isSame(dateObj, 'day')
     })));
     
-    // Update userData context
-    if (userData && userData.length > 0) {
-      const updatedUserData = [...userData];
-      updatedUserData[0].CurrentDate = dateObj;
-      setUserData(updatedUserData);
-    }
-    
-    // Fetch flights for new date
     await fetchFlights(dateObj);
-  }, [userData, setUserData, fetchFlights]);
+  }, [updateUserData, fetchFlights]);
 
-  // Initialize - runs only once on mount
+  // تابع به‌روزرسانی تعداد مسافران
+  const updatePassengers = (type, operation) => {
+    setPassengers(prev => {
+      const newValue = operation === 'plus' ? prev[type] + 1 : Math.max(0, prev[type] - 1);
+      const newPassengers = { ...prev, [type]: newValue };
+      
+      // به‌روزرسانی userData با تعداد مسافران جدید
+      updateUserData({
+        Passengers: newPassengers
+      });
+      
+      return newPassengers;
+    });
+  };
+
+  // مقداردهی اولیه
   useEffect(() => {
-    console.log('Initializing component...');
+    console.log('Component initialized');
+    console.log('Initial userData:', userData);
     isMountedRef.current = true;
     
-    // Generate date array without prices
-    const initialDates = generateDateArray(new Date());
+    let initialDate = new Date();
+    if (userData && userData.length > 0 && userData[0].DepartureDate) {
+      try {
+        initialDate = new Date(userData[0].DepartureDate);
+        if (isNaN(initialDate.getTime())) {
+          initialDate = new Date();
+        }
+      } catch (error) {
+        console.error('Error parsing date from userData:', error);
+        initialDate = new Date();
+      }
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    initialDate.setHours(0, 0, 0, 0);
+    
+    if (initialDate < today) {
+      initialDate = new Date(today);
+    }
+    
+    setSelectedDate(initialDate);
+    const initialDates = generateDateArray(initialDate);
     setDatePrices(initialDates);
     
-    // Set initial date from userData if available
-    let initialDate = new Date();
-    if (userData && userData.length > 0 && userData[0].CurrentDate) {
-      initialDate = new Date(userData[0].CurrentDate);
-      setSelectedDate(initialDate);
+    // لود اسکریپت TomSelect
+    const loadTomSelectScript = () => {
+      const script = document.createElement('script');
+      script.src = './vendor/lib/tom-select/tom-select.complete.min.js';
+      script.onload = () => {
+        setTimeout(() => {
+          if (!citiesLoading && window.TomSelect) {
+            initializeTomSelect();
+          }
+        }, 500);
+      };
+      document.body.appendChild(script);
       
-      // Update active date in slider
-      const updatedDates = initialDates.map(item => ({
-        ...item,
-        active: moment(item.dateObj).isSame(initialDate, 'day')
-      }));
-      setDatePrices(updatedDates);
-    }
-    
-    // Fetch initial data
-    if (userData && userData.length > 0) {
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          fetchFlights(initialDate);
-        }
-      }, 100);
-    }
+      // لود CSS TomSelect
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = './vendor/lib/tom-select/tom-select.min.css';
+      document.head.appendChild(link);
+    };
+
+    loadTomSelectScript();
 
     return () => {
       isMountedRef.current = false;
+      if (originTomSelect) originTomSelect.destroy();
+      if (destinationTomSelect) destinationTomSelect.destroy();
     };
-  }, []); 
-  
-  // Empty dependency array - runs only once
+  }, [cityList, citiesLoading, userData, generateDateArray]);
 
-  // Listen to userData changes
+  // Swiper initialization
   useEffect(() => {
-    if (userData && userData.length > 0 && isMountedRef.current) {
-      console.log('UserData loaded, checking if need to fetch...');
-      
-      const userDate = new Date(userData[0].CurrentDate);
-      const dateString = moment(userDate).format('jYYYY-jMM-jDD');
-      
-      // فقط اگر تاریخ جدیدی است که قبلاً لود نشده
-      if (lastFetchedDateRef.current !== dateString) {
-        setSelectedDate(userDate);
-        
-        // Update active date in slider
-        setDatePrices(prev => prev.map(item => ({
-          ...item,
-          active: moment(item.dateObj).isSame(userDate, 'day')
-        })));
-        
-        fetchFlights(userDate);
-      }
+    if (datePrices.length > 0) {
+      setTimeout(() => {
+        try {
+          const swiperEl = document.querySelector('.search-content-swiper');
+          if (swiperEl) {
+            const swiper = new Swiper('.search-content-swiper', {
+              modules: [Navigation],
+              slidesPerView: 3,
+              spaceBetween: 10,
+              navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+              },
+              breakpoints: {
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 5
+                },
+                480: {
+                  slidesPerView: 3,
+                  spaceBetween: 8
+                },
+                768: {
+                  slidesPerView: 5,
+                  spaceBetween: 10
+                },
+                1024: {
+                  slidesPerView: 7,
+                  spaceBetween: 15
+                }
+              }
+            });
+            
+            swiperRef.current = swiper;
+            
+            const activeIndex = datePrices.findIndex(item => item.active);
+            if (activeIndex !== -1 && swiper) {
+              swiper.slideTo(activeIndex);
+            }
+          }
+        } catch (error) {
+          console.error('Error initializing Swiper:', error);
+        }
+      }, 500);
     }
-  }, [userData]); // Only depends on userData changes
+  }, [datePrices]);
 
-  // Convert API data to flight format
-  const convertToFlightData = (apiData: any[]) => {
+  // تابع تبدیل داده‌های API به فرمت UI
+  const convertToFlightData = (apiData) => {
     if (!apiData || apiData.length === 0) return [];
     
-    return apiData.map((flight: any, index: number) => ({
-      id: flight.busCode ,
-      airline: flight.companyName ,
-      busCode: flight.busCode ,
-      from: flight.originCity || userData?.[0]?.StartPlaceName ,
-      to: flight.destinationCity || userData?.[0]?.EndPlaceName ,
-      departureTime: flight.timeMove ,
-      arrivalTime: flight.arrivalTime ,
-      price: flight.price ? flight.price.toLocaleString() : '',
-      seatsLeft: flight.countFreeChairs ,
-      aircraft: flight.carType ,
-      class: flight.classType ,
-      type: flight.ticketType ,
-      luggage: flight.luggage ,
-      terminal: `${flight.originTerminal } - ${flight.destinationTerminal }`,
+    return apiData.map((flight, index) => {
+      const departureTime = flight.timeMove || '۲۱:۴۰';
+      const arrivalTime = calculateArrivalTime(departureTime);
+      
+      const getCompanyLogo = (companyName) => {
+        return './img/logo-m.png';
+      };
+      
+      return {
+        id: flight.busCode || `flight-${index}`,
+        companyName: flight.companyName || 'آتا',
+        companyLogo: getCompanyLogo(flight.companyName),
+        busCode: flight.busCode || `BUS${index + 1000}`,
+        originCity: userData[0]?.StartPlace,
+        destinationCity: userData[0]?.EndPlace ,
+        timeMove: departureTime,
+        arrivalTime: arrivalTime,
+        price: flight.price ? flight.price.toLocaleString() : '۱,۳۰۰,۰۰۰',
+        countFreeChairs: flight.countFreeChairs || Math.floor(Math.random() * 5) + 1,
+        carType: flight.carType || 'اتوبوس VIP',
+        classType: flight.classType || 'اکونومی',
+        ticketType: flight.ticketType || 'سیستمی',
+        luggage: flight.luggage || '20 کیلوگرم',
+        originTerminal: flight.originTerminal || 'ترمینال اصلی',
+        destinationTerminal: flight.destinationTerminal || 'ترمینال اصلی',
+        flightNumber: flight.busCode || `BUS${index + 1000}`,
+        moveDateTime: flight.moveDateTime,
+        description: flight.description,
+        sourceCode: flight.sourceCode
+      };
+    });
+  };
+
+  // محاسبه زمان رسیدن
+  const calculateArrivalTime = (departureTime) => {
+    if (!departureTime) return '۲۳:۴۰';
+    try {
+      const [hours, minutes] = departureTime.split(':').map(num => parseInt(num, 10));
+      if (isNaN(hours) || isNaN(minutes)) return '۲۳:۴۰';
+      
+      let arrivalHours = hours + 2;
+      if (arrivalHours >= 24) arrivalHours -= 24;
+      
+      const persianHours = arrivalHours.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      const persianMinutes = minutes.toString().padStart(2, '0').replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      
+      return `${persianHours}:${persianMinutes}`;
+    } catch (e) {
+      console.error('Error calculating arrival time:', e);
+      return '۲۳:۴۰';
+    }
+  };
+
+  // تابع کلیک روی انتخاب پرواز
+  const handleSelectFlight = (flight) => {
+    console.log('Selecting flight:', flight);
+    
+    const busInfo = {
+      busCode: flight.busCode,
       companyName: flight.companyName,
+      carType: flight.carType,
+      originCity: flight.originCity,
+      destinationCity: flight.destinationCity,
       originTerminal: flight.originTerminal,
       destinationTerminal: flight.destinationTerminal,
-      moveDateTime: flight.moveDateTime,
+      timeMove: flight.timeMove,
+      price: flight.price.replace(/,/g, ''),
+      countFreeChairs: flight.countFreeChairs,
       description: flight.description,
-      sourceCode : flight.sourceCode,
-      rawData: flight
-    }));
-  };
-
-  // Helper function to calculate arrival time
-  const calculateArrivalTime = (departureTime: string) => {
-    if (!departureTime) return '۲۲:۵۰';
-    const [hours, minutes] = departureTime.split(':').map(Number);
-    const arrivalHours = (hours + 1) % 24;
-    return `${arrivalHours.toString().padStart(2, '۰')}:${minutes.toString().padStart(2, '۰')}`;
-  };
-
-  // Sample airlines (you can update this with real airline data)
-  const airlines = [
-    { id: 'taban', name: t('newprofile.search.airlines.taban'), logo: '../../img/pages/search/logos/taban-sm.png' },
-    { id: 'ata', name: t('newprofile.search.airlines.ata'), logo: '/img/pages/search/logos/ata-sm.png' },
-    { id: 'flypersia', name: t('newprofile.search.airlines.flypersia'), logo: '/img/pages/search/logos/flypersia-sm.png' },
-    { id: 'karun', name: t('newprofile.search.airlines.karun'), logo: '/img/pages/search/logos/karun-sm.png' },
-    { id: 'aseman', name: t('newprofile.search.airlines.aseman'), logo: '/img/pages/search/logos/aseman-sm.png' },
-    { id: 'saha', name: t('newprofile.search.airlines.saha'), logo: '/img/pages/search/logos/saha-sm.png' }
-  ];
-
-  // Header Component
-  const Header = () => (
-    <AppBar position="static" color="default" elevation={1}>
-      <Toolbar>
-        <Container maxWidth="lg">
-          <Grid container alignItems="center" spacing={2}>
-            <Grid item xs={6} md={2}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {isMobile && (
-                  <IconButton onClick={() => setMenuOpen(true)}>
-                    <MenuIcon />
-                  </IconButton>
-                )}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box
-                    component="img"
-                    src="../../img/logo-m.png"
-                    alt={t('newprofile.header.title')}
-                    sx={{ width: 40, height: 40 }}
-                  />
-                  <Typography variant="h6" fontWeight="bold">
-                    {t('newprofile.header.title')}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-            <Grid item md={8} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-                <Button color="inherit">{t('newprofile.header.services')}</Button>
-                <Button color="inherit">{t('newprofile.header.about')}</Button>
-                <Button color="inherit">{t('newprofile.header.contact')}</Button>
-                <Button color="inherit">{t('newprofile.header.stations')}</Button>
-                <Button color="inherit">{t('newprofile.header.bookedTickets')}</Button>
-              </Box>
-            </Grid>
-
-            <Grid item xs={6} md={2}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-                <IconButton onClick={() => setDarkMode(!darkMode)}>
-                  {darkMode ? <LightIcon /> : <DarkIcon />}
-                </IconButton>
-                <Button
-                  variant="outlined"
-                  startIcon={<PersonIcon />}
-                  onClick={() => setSignModalOpen(true)}
-                >
-                  {t('newprofile.auth.loginSignup')}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
-      </Toolbar>
-    </AppBar>
-  );
-
-  // Search Header Section
-  const SearchHeader = () => (
-    <Paper 
-      elevation={2} 
-      sx={{ 
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        mb: 2,
-        cursor: 'pointer'
-      }}
-      onClick={() => setSearchExpanded(!searchExpanded)}
-    >
-      <Box sx={{ p: 3 }}>
-        <Grid container alignItems="center" spacing={3}>
-          <Grid item xs={12} md={3}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <FlightIcon color="primary" />
-              <Typography variant="h6">
-                {userData?.[0]?.StartPlaceName || t('newprofile.search.header.ticket')} {t('newprofile.search.header.fromTo')} {userData?.[0]?.EndPlaceName || ''}
-              </Typography>
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CalendarIcon color="primary" />
-              <Typography variant="body1">
-                {isPersian 
-                  ? moment(selectedDate).format('jYYYY/jMM/jDD')
-                  : moment(selectedDate).format('YYYY/MM/DD')}
-              </Typography>
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <PeopleIcon color="primary" />
-              {/* <Typography variant="body1">
-                {passengers.adults + passengers.children + passengers.infants} {t('newprofile.search.header.passengers')}
-              </Typography> */}
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Button
-              variant="contained"
-              startIcon={<SearchIcon />}
-              fullWidth
-              onClick={() => setSearchExpanded(!searchExpanded)}
-            >
-              {t('newprofile.search.header.editSearch')}
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-    </Paper>
-  );
-
-  // Filters Sidebar
-  const FiltersSidebar = () => (
-    <Card sx={{ display: { xs: 'none', md: 'block' } }}>
-      <CardContent sx={{ p: 3 }}>
-        {/* Filter Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h6" fontWeight="bold">
-            {t('newprofile.search.filters.title')}
-          </Typography>
-          <Button size="small" color="primary">
-            {t('newprofile.search.filters.clearAll')}
-          </Button>
-        </Box>
-
-        {/* Active Filters */}
-        <Box sx={{ mb: 3 }}>
-          <Chip
-            label="نوع بلیط: سیستمی"
-            onDelete={() => {}}
-            variant="outlined"
-            size="small"
-            sx={{ mb: 1 }}
-          />
-        </Box>
-
-        {/* Filters Accordion */}
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography fontWeight="bold">{t('newprofile.search.filters.departureTime')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Slider
-              defaultValue={[6, 22]}
-              valueLabelDisplay="auto"
-              valueLabelFormat={(value) => `${value}:00`}
-              min={0}
-              max={24}
-              sx={{ mt: 2 }}
-            />
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography fontWeight="bold">{t('newprofile.search.filters.ticketType')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label={t('newprofile.search.filters.ticketTypes.system')}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label={t('newprofile.search.filters.ticketTypes.charter')}
-            />
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography fontWeight="bold">{t('newprofile.search.filters.airlines')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            {airlines.map((airline) => (
-              <FormControlLabel
-                key={airline.id}
-                control={<Checkbox />}
-                label={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    {/* <Box
-                      component="img"
-                      src={airline.logo}
-                      alt={airline.name}
-                      sx={{ width: 20, height: 20 }}
-                    /> */}
-                    {airline.name}
-                  </Box>
-                }
-              />
-            ))}
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography fontWeight="bold">{t('newprofile.search.filters.otherOptions')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormControlLabel
-              control={<Checkbox />}
-              label={t('newprofile.search.filters.otherOptionsList.duplicateTickets')}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label={t('newprofile.search.filters.otherOptionsList.availableTickets')}
-            />
-          </AccordionDetails>
-        </Accordion>
-      </CardContent>
-    </Card>
-  );
-
-  // Date Slider (without prices)
-  const DateSlider = () => (
-    <Card sx={{ mb: 3 }}>
-      <CardContent sx={{ p: 2 }}>
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={10}
-          slidesPerView={isMobile ? 3 : 7}
-          navigation
-        >
-          {datePrices.map((dateItem, index) => (
-            <SwiperSlide key={index}>
-              <Paper
-                sx={{
-                  p: 2,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  bgcolor: dateItem.active ? 'primary.light' : 'background.paper',
-                  color: dateItem.active ? 'primary.contrastText' : 'text.primary',
-                  transition: 'all 0.3s',
-                  '&:hover': {
-                    bgcolor: 'primary.main',
-                    color: 'primary.contrastText'
-                  }
-                }}
-                onClick={() => handleDateClick(dateItem.dateObj)}
-              >
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {dateItem.date}
-                </Typography>
-              </Paper>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </CardContent>
-    </Card>
-  );
-
-  // Flight Card Component
-  const FlightCard = ({ flight }: { flight: any }) => {
-    const airline = airlines.find(a => a.id === 'ata') || airlines[0];
+      moveDateTime: flight.moveDateTime,
+      sourceCode: flight.sourceCode,
+      userStartPlaceCode: userData[0]?.StartPlaceCode,
+      userToken: userData[0]?.Token,
+      requestNumber: flightData?.requestNumber
+    };
     
-    return (
-      <Card sx={{ mb: 3, overflow: 'visible' }}>
-        <Grid container>
-          {/* Flight Info */}
-          <Grid item xs={12} md={9}>
-            <Box sx={{ p: 3 }}>
-              {/* Airline and Basic Info */}
-              <Grid container alignItems="center" spacing={3}>
-                <Grid item xs={2}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    {/* <Box
-                      component="img"
-                      src={airline.logo}
-                      alt={airline.name}
-                      sx={{ width: 50, height: 50, mb: 1 }}
-                    /> */}
-                    <Typography variant="body1" fontWeight="bold">
-                      {flight.companyName}
-                    </Typography>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={10}>
-                  <Box sx={{ mb: 2 }}>
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                      <Chip label={flight.type} size="small" variant="outlined" />
-                      <Chip label={flight.class} size="small" variant="outlined" />
-                      <Chip label={flight.aircraft} size="small" variant="outlined" />
-                    </Box>
-                    
-                    <Grid container alignItems="center" spacing={2}>
-                      <Grid item xs={4}>
-                      
-                        <Typography variant="body2" color="text.secondary">
-                          {flight.from}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {flight.originTerminal }
-                        </Typography>
-                      </Grid>
-                      
-                      <Grid item xs={4} >
-                        <FlightIcon sx={{  color: 'text.secondary' }} />
-                        <Typography variant="h6" fontWeight="bold">
-                          {flight.departureTime}
-                        </Typography>
-                      </Grid>
-                      
-                      <Grid item xs={4} sx={{ textAlign: 'right' }}>
-                        <Typography variant="h6" fontWeight="bold">
-                          {flight.arrivalTime}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {flight.to}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {flight.destinationTerminal }
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-
-                  {/* Flight Details Tabs */}
-                  <Tabs 
-                    value={activeFlightTab} 
-                    onChange={(e, newValue) => setActiveFlightTab(newValue)}
-                    sx={{ mb: 2 }}
-                  >
-                    <Tab label={t('newprofile.search.results.flightInfo')} />
-                    <Tab label={t('newprofile.search.results.refundRules')} />
-                  </Tabs>
-
-                  {activeFlightTab === 0 && (
-                    <Grid container spacing={3}>
-                      <Grid item xs={6} md={3}>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('newprofile.search.results.flightNumber')}
-                        </Typography>
-                        <Typography variant="body1" fontWeight="bold">
-                          {flight.flightNumber}
-                        </Typography>
-                      </Grid>
-                      {/* <Grid item xs={6} md={3}>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('newprofile.search.results.cabinClass')}
-                        </Typography>
-                        <Typography variant="body1" fontWeight="bold">
-                          {flight.class}
-                        </Typography>
-                      </Grid> */}
-                      <Grid item xs={6} md={6}>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('newprofile.search.results.aircraftModel')}
-                        </Typography>
-                        <Typography variant="body1" fontWeight="bold">
-                          {flight.aircraft}
-                        </Typography>
-                      </Grid>
-                      {/* <Grid item xs={6} md={3}>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('newprofile.search.results.luggageAllowance')}
-                        </Typography>
-                        <Typography variant="body1" fontWeight="bold">
-                          {flight.luggage}
-                        </Typography>
-                      </Grid> */}
-                    </Grid>
-                  )}
-
-                  {activeFlightTab === 1 && (
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                        <InfoIcon color="info" />
-                        <Typography variant="body2" color="text.secondary">
-                          {t('newprofile.search.results.refundNote')}{' '}
-                          <Button variant="text" size="small">
-                            {t('newprofile.search.results.viewRefundRules')}
-                          </Button>
-                        </Typography>
-                      </Box>
-                      
-                      <Grid container spacing={2}>
-                        {[30, 60, 70, 75].map((percent, index) => (
-                          <Grid item xs={6} md={3} key={index}>
-                            <Paper sx={{ p: 2, textAlign: 'center' }}>
-                              <Typography variant="h6" color="error.main">
-                                {percent}%
-                              </Typography>
-                              <Typography variant="body2">
-                                شرایط بازگشت وجه
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                        ))}
-                      </Grid>
-                    </Box>
-                  )}
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
-
-          {/* Price and Action */}
-          <Grid item xs={12} md={3}>
-            <Box 
-              sx={{ 
-                bgcolor: 'grey.50',
-                height: '100%',
-                p: 3,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <Typography variant="h4" color="info.main" fontWeight="bold" gutterBottom>
-                {flight.price}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                {t('newprofile.common.currency')}
-              </Typography>
-              
-              <Typography variant="body2" fontWeight="bold" gutterBottom>
-                {t('newprofile.search.results.officialRate')}
-              </Typography>
-              
-              <Button 
-                variant="contained" 
-                fullWidth 
-                size="large"
-                sx={{ mb: 2 }}
-                startIcon={<TicketIcon />}
-                onClick={()=>{
-
-
-  // ذخیره اطلاعات کامل
-  localStorage.setItem('selectedBusInfo', JSON.stringify({
-    busCode: flight.busCode,
-    companyName: flight.companyName,
-    carType: flight.carType,
-    originCity: flight.originCity,
-    destinationCity: flight.destinationCity,
-    originTerminal: flight.originTerminal,
-    destinationTerminal: flight.destinationTerminal,
-    timeMove: flight.timeMove,
-    price: flight.price,
-    countFreeChairs: flight.countFreeChairs,
-    description: flight.description,
-    moveDateTime: flight.moveDateTime,
-    sourceCode : flight.sourceCode,
-    // اطلاعات userData
-    userStartPlaceCode: userData[0].StartPlaceCode,
-    userToken: userData[0].Token,
-    // این مهم است: requestNumber را هم ذخیره کن
-    requestNumber: flightData?.requestNumber // از state Data که خروجی BusSearch است
-  }))
-    console.log('flight.busCode',flight.sourceCode)
-                   navigate('/OrderPage')
-                }}
-              >
-                {t('newprofile.search.results.selectFlight')}
-              </Button>
-              
-              <Typography variant="body2" color={flight.seatsLeft > 3 ? 'text.secondary' : 'error.main'} gutterBottom>
-                {flight.seatsLeft} {t('newprofile.search.results.seatsLeft')}
-              </Typography>
-
-              <Box sx={{ width: '100%', mt: 2 }}>
-                {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderBottom: 1, borderColor: 'divider' }}>
-                  <Typography variant="body2">{t('newprofile.search.results.adult')}</Typography>
-                  <Typography variant="body2" fontWeight="bold">{flight.price} {t('newprofile.common.currency')}</Typography>
-                </Box> */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
-                  <Typography variant="body2">{t('newprofile.search.results.price')}</Typography>
-                  <Typography variant="body2" fontWeight="bold">{flight.price} {t('newprofile.common.currency')}</Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </Card>
-    );
-  };
-
-  // Loading Skeletons
-  const LoadingSkeletons = () => (
-    <Stack spacing={2}>
-      {[1, 2, 3].map((item) => (
-        <Skeleton 
-          key={item} 
-          variant="rectangular" 
-          width="100%" 
-          height={isMobile ? 150 : 200} 
-          sx={{ borderRadius: 2 }}
-        />
-      ))}
-    </Stack>
-  );
-
-  // Main Content
-  const MainContent = () => {
-    const flights = convertToFlightData(flightData?.searchItems || []);
+    console.log('Saving bus info:', busInfo);
+    localStorage.setItem('selectedBusInfo', JSON.stringify(busInfo));
     
-    return (
-      <Box>
-        {/* Results Header */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-              <Typography variant="body1" color="text.secondary">
-                {loading ? (
-                  <Skeleton width={200} />
-                ) : (
-                  `${t('newprofile.search.results.showing')} ${flights.length} ${t('newprofile.search.results.of')} ${flightData?.totalCount || 0} ${t('newprofile.search.results.flights')}`
-                )}
-              </Typography>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  {t('newprofile.search.results.sortBy')}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {['recommended', 'earliest', 'latest', 'cheapest', 'mostExpensive'].map((sort) => (
-                    <Button
-                      key={sort}
-                      variant={activeSort === sort ? 'contained' : 'text'}
-                      size="small"
-                      onClick={() => setActiveSort(sort)}
-                      disabled={loading}
-                    >
-                      {t(`newprofile.search.results.sortOptions.${sort}`)}
-                    </Button>
-                  ))}
-                </Box>
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Price Note */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-          <InfoIcon color="info" />
-          <Typography variant="body2" color="text.secondary">
-            {t('newprofile.search.results.priceNote')}
-          </Typography>
-        </Box>
-
-        {/* Content */}
-        {loading ? (
-          <LoadingSkeletons />
-        ) : flights.length > 0 ? (
-          // Flights List
-          <Box>
-            {flights.map((flight) => (
-              <FlightCard key={flight.id} flight={flight} />
-            ))}
-          </Box>
-        ) : (
-          // No Results Found
-          <NoResultsFound 
-            title={t('busSchedule.noResults')}
-            isPersian={isPersian}
-          />
-        )}
-      </Box>
-    );
+    navigate('/OrderPage');
   };
 
-  // Footer Component
-  const Footer = () => (
-    <Box
-      component="footer"
-      sx={{
-        bgcolor: 'background.paper',
-        borderTop: 1,
-        borderColor: 'divider',
-        mt: 8
-      }}
-    >
-      <Container>
-        <Box sx={{ py: 8 }}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                  <Box
-                    component="img"
-                    src="../../img/logo-m.png"
-                    alt={t('newprofile.header.title')}
-                    sx={{ width: 60, height: 60 }}
-                  />
-                  <Typography variant="h4" fontWeight="bold">
-                    {t('newprofile.header.title')}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: '-flex', alignItems: 'center', gap: 1 }}>
-                  <PhoneIcon fontSize="small" />
-                  <Typography>
-                    {t('newprofile.common.phone')}: ۰۱۱۳۳۲۴۳۰۵۶ - ۰۹۱۱۷۹۷۶۸۵۵
-                  </Typography>
-                </Box>
-                
-                <Typography>
-                  {t('newprofile.common.address')}: مازندران، ساری، ترمینال دولت، پرتو سیر ایرانیان
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                  {t('newprofile.footer.description')}
-                </Typography>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={4}>
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.about')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.header.about')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.header.contact')}</Button>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.customerService')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.footer.refundGuide')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.footer.terms')}</Button>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.additionalInfo')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.footer.corporateSales')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.footer.agencyCooperation')}</Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Box sx={{ 
-          borderTop: 1, 
-          borderColor: 'divider', 
-          py: 4,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 2
-        }}>
-          <Typography variant="body2" color="text.secondary">
-            {t('newprofile.footer.copyright')} • {t('newprofile.footer.designCredit')}
-          </Typography>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton size="small" color="primary">
-              <TelegramIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <TwitterIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <YouTubeIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <InstagramIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <LinkedInIcon />
-            </IconButton>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
-  );
-
-  // Auth Modal
-  const AuthModal = () => (
-    <Dialog 
-      open={signModalOpen} 
-      onClose={() => setSignModalOpen(false)}
-      maxWidth="sm"
-      fullWidth
-    >
-      <DialogTitle>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">{t('newprofile.auth.loginSignup')}</Typography>
-          <IconButton onClick={() => setSignModalOpen(false)}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            {t('newprofile.auth.enterPhone')}
-          </Typography>
-          
-          <Box sx={{ my: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              {t('newprofile.auth.phoneNumber')}
-            </Typography>
-          </Box>
-          
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {t('newprofile.auth.acceptTerms')}
-          </Typography>
-          
-          <Button 
-            variant="contained" 
-            fullWidth 
-            size="large"
-            sx={{ mb: 2 }}
-          >
-            {t('newprofile.auth.confirm')}
-          </Button>
-          
-          <Button variant="text" fullWidth>
-            {t('newprofile.auth.loginWithPassword')}
-          </Button>
-        </Box>
-      </DialogContent>
-    </Dialog>
-  );
+  // داده‌های تبدیل شده
+  const flights = convertToFlightData(flightData?.searchItems || []);
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh', 
-      bgcolor: 'background.default',
-      direction: isRTL ? 'rtl' : 'ltr'
-    }}>
-      <Header />
-      
-      <Container maxWidth="lg" sx={{ py: 3 }}>
-        <SearchHeader />
-        
-        <Grid container spacing={3}>
-          {/* Sidebar */}
-          {/* <Grid item xs={12} md={3}>
-            <FiltersSidebar />
-          </Grid> */}
+    <LocalizationProvider dateAdapter={AdapterDateFnsJalali}>
+      <div dir="rtl" lang="fa" data-bs-theme={darkMode ? 'dark' : 'light'}>
+        {/* Offcanvas Menu */}
+        <div className="offcanvas offcanvas-start" id="offcanvasMenu" tabIndex="-1" aria-labelledby="offcanvasMenuLabel">
+          <div className="offcanvas-header">
+            <h5 className="offcanvas-title text-muted" id="offcanvasMenuLabel">منو کاربری</h5>
+            <button className="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div className="offcanvas-body">
+            <div className="h-100 nt-flex-column">
+              <div className="w-100 flex-grow-1">
+                <div className="nt-flex-between-center gap-2 mb-4">
+                  <div className="nt-flex-start-center">
+                    <img src="./img/logo-m.png" alt="پرتو سیر" width="80"/>
+                  </div>
+                  <button className="btnSwitch btn btn-lg btn-light" type="button" onClick={() => setDarkMode(!darkMode)} aria-label="تغییر حالت روشن و تاریک سایت">
+                    <i className={`ti ti-${darkMode ? 'moon' : 'sun'} fs-5`} aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div className="accordion accordion-flush" id="accordionOffcanvasMenu">
+                  <div className="accordion-item">
+                    <h2 className="accordion-header">
+                      <button className="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#accordionOffcanvasMenu1" aria-expanded="false" aria-controls="accordionOffcanvasMenu1">خدمات سفر</button>
+                    </h2>
+                    <div className="accordion-collapse collapse" id="accordionOffcanvasMenu1" data-bs-parent="#accordionOffcanvasMenu">
+                      <div className="accordion-body">
+                        <ul className="list-unstyled nt-flex-column">
+                          <li><a className="btn btn-link link-dark fs-5" href="./index.html"><i className="ti ti-bus fs-4" aria-hidden="true"></i>اتوبوس</a></li>
+                          <li><a className="btn btn-link link-dark fs-5" href="./booking-taxi.html"><i className="ti ti-car fs-4" aria-hidden="true"></i>تاکسی</a></li>
+                          <li><a className="btn btn-link link-dark fs-5" href="./booking-van.html"><i className="ti ti-rv-truck fs-4" aria-hidden="true"></i>ون</a></li>
+                          <li><a className="btn btn-link link-dark fs-5" href="./booking-bar.html"><i className="ti ti-truck fs-4" aria-hidden="true"></i>باربری</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <nav className="nt-flex-column">
+                  <a className="btn btn-link link-dark fs-5" href="./about-us.html">درباره ما</a>
+                  <a className="btn btn-link link-dark fs-5" href="./contact.html">تماس با ما</a>
+                  <a className="btn btn-link link-dark fs-5" href="./branches.html">ایستگاه ها</a>
+                  <a className="btn btn-link link-dark fs-5" href="">بلیط های رزرو شده</a>
+                </nav>
+              </div>
+              <div className="w-100 border-top py-3">
+                <div className="nt-flex-column-center-center">
+                  <div className="text-muted">پرتو سیر; همراه همیشگی سفرهای شما.</div>
+                  <div className="nt-flex-start-center text-muted" role="contentinfo" aria-label="اطلاعات حق نشر">
+                    <span className="visually-hidden">حق نشر ©</span>
+                    <i className="ti ti-copyright fs-5" aria-hidden="true"></i>
+                    ۱۴۰۴ پرتو سیر. تمامی حقوق محفوظ است.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Header Component */}
+        <Header />
+
+        {/* Main Content */}
+        <main className="main bg-light">
+          {/* فاصله بین هدر و بخش جستجو */}
+          <div style={{ paddingTop: '60px' }}></div>
           
-          {/* Main Content */}
-          <Grid item xs={12} md={12}>
-            <DateSlider />
-            <MainContent />
-          </Grid>
-        </Grid>
-      </Container>
-      
-      <Footer />
-      <AuthModal />
-    </Box>
+          <div className="search-header">
+            <div 
+              onClick={() => setSearchExpanded(!searchExpanded)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="search-header-content gap-5 p-3">
+                <div className="nt-flex-start-center gap-1">
+                  <i className="ti ti-bus fs-5" aria-hidden="true"></i>
+                  <span>بلیط اتوبوس {userData[0]?.StartPlace || '...'} به {userData[0]?.EndPlace || '...'}</span>
+                </div>
+                <div className="nt-flex-start-center gap-1">
+                  <i className="ti ti-calendar-week fs-5" aria-hidden="true"></i>
+                  <span>{formatPersianDate(selectedDate).fullDate}</span>
+                </div>
+               
+                <div className="btn btn-primary">
+                  <i className="ti ti-search fs-5" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div className={`collapse ${searchExpanded ? 'show' : ''}`} id="collapseExample">
+              <div className="card card-body">
+                <div className="container booking-wrapper bg-transparent pt-4 px-4 mb-0">
+                  <div className="container mb-5">
+                    <form className="row g-3 booking-form" onSubmit={handleSearch}>
+                      <div className="col-12">
+                        <div className="nt-flex gap-3 mb-2">
+                       
+                        </div>
+                      </div>
+                      
+                      <div className="col-12 col-md-5">
+                        <div className="booking-fromTo">
+                          <select 
+                            ref={originSelectRef}
+                            className="tom-select-header form-select" 
+                            placeholder="مبدا (شهر)" 
+                            autoComplete="off"
+                          >
+                            <option value="">مبدا (شهر)</option>
+                            {(cityList.length > 0 ? cityList : []).map(city => (
+                              <option key={city.code} value={city.code}>
+                                {city.name_fa}
+                              </option>
+                            ))}
+                          </select>
+                          <select 
+                            ref={destinationSelectRef}
+                            className="tom-select-header form-select" 
+                            placeholder="مقصد (شهر)" 
+                            autoComplete="off"
+                          >
+                            <option value="">مقصد (شهر)</option>
+                            {(cityList.length > 0 ? cityList : []).map(city => (
+                              <option key={city.code} value={city.code}>
+                                {city.name_fa}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className="col-12 col-md-3">
+                        <div className="booking-departureReturn">
+                          <DatePicker
+                            label="تاریخ"
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            renderInput={(params) => (
+                              <TextField 
+                                {...params} 
+                                className="form-control"
+                                placeholder="تاریخ "
+                                fullWidth
+                                sx={{
+                                  '& .MuiInputBase-root': {
+                                    height: '100%',
+                                    fontFamily: 'inherit'
+                                  }
+                                }}
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="col-6 col-md-2">
+                        <button className="btn btn-primary booking-submit" type="submit">
+                          جستجو
+                          <i className="ti ti-search fs-5" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* نتایج جستجو */}
+          <div className="container py-4 mb-5">
+            <div className="row g-4">
+              <div className="col-12">
+                <div className="search-content">
+                  {/* اسلایدر تاریخ‌ها */}
+                  <div className="swiper search-content-swiper mb-4">
+                    <div className="swiper-wrapper">
+                      {datePrices.map((dateItem, index) => (
+                        <div className="swiper-slide" key={index}>
+                          <a 
+                            className={`link py-2 ${dateItem.active ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              !dateItem.isPast && handleDateClick(dateItem.dateObj, dateItem);
+                            }}
+                            href=""
+                            style={{ 
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              minHeight: '70px',
+                              textDecoration: 'none',
+                              cursor: dateItem.isPast ? 'not-allowed' : 'pointer',
+                              opacity: dateItem.isPast ? 0.6 : 1,
+                              borderBottom: dateItem.active ? '2px solid #198754' : 'none',
+                              padding: '8px 5px',
+                            }}
+                          >
+                            <div className="text-muted" style={{ 
+                              fontSize: '14px',
+                              color: dateItem.isPast ? '#adb5bd' : '#6c757d'
+                            }}>
+                              {dateItem.date}
+                            </div>
+                            
+                            {dateItem.isToday && !dateItem.active && (
+                              <div className="badge bg-warning text-dark mt-2" style={{
+                                fontSize: '11px',
+                                padding: '2px 6px',
+                                borderRadius: '10px'
+                              }}>
+                                امروز
+                              </div>
+                            )}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="swiper-button-next" style={{ color: '#0d6efd' }}></div>
+                    <div className="swiper-button-prev" style={{ color: '#0d6efd' }}></div>
+                  </div>
+                  
+                  <div className="nt-flex-start-center gap-2 text-muted mb-4">
+                    <i className="ti ti-info-circle fs-5" aria-hidden="true"></i>
+                    نرخ‌ها برای هر فرد بزرگسال در نظر گرفته شده است.
+                  </div>
+                  
+                  {/* فیلتر مرتب‌سازی */}
+                  <div className="bg-white text-muted border rounded mb-4">
+                    <div className="search-content-filter gap-4 p-3">
+                      <div className="text-muted">مرتب سازی:</div>
+                      <nav className="nt-flex-start-center flex-nowrap flex-grow-1">
+                        <button 
+                          className={`btn btn-link ${activeSort === 'recommended' ? 'active' : ''}`}
+                          onClick={() => setActiveSort('recommended')}
+                        >پیشنهادی</button>
+                        <button 
+                          className={`btn btn-link ${activeSort === 'earliest' ? 'active' : ''}`}
+                          onClick={() => setActiveSort('earliest')}
+                        >زودترین</button>
+                        <button 
+                          className={`btn btn-link ${activeSort === 'latest' ? 'active' : ''}`}
+                          onClick={() => setActiveSort('latest')}
+                        >دیرترین</button>
+                        <button 
+                          className={`btn btn-link ${activeSort === 'cheapest' ? 'active' : ''}`}
+                          onClick={() => setActiveSort('cheapest')}
+                        >ارزان‌ترین</button>
+                        <button 
+                          className={`btn btn-link ${activeSort === 'mostExpensive' ? 'active' : ''}`}
+                          onClick={() => setActiveSort('mostExpensive')}
+                        >گران‌ترین</button>
+                      </nav>
+                    </div>
+                    
+                    {/* لیست اتوبوس‌ها */}
+                    <ul className="search-content-lists p-3 bg-light-subtle">
+                      {loading ? (
+                        <li className="search-content-item container bg-white">
+                          <div className="text-center p-5">
+                            <div className="spinner-border text-primary" role="status">
+                              <span className="visually-hidden">در حال بارگذاری...</span>
+                            </div>
+                            <div className="mt-3">در حال بارگذاری نتایج...</div>
+                          </div>
+                        </li>
+                      ) : flights.length > 0 ? (
+                        flights.map((flight) => {
+                          const isExpanded = expandedFlightId === flight.id;
+                          const currentTab = activeFlightTab[flight.id] || 0;
+                          
+                          return (
+                            <li className="search-content-item container bg-white" key={flight.id} style={{ marginBottom: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+                              <div className="row">
+                                {/* اطلاعات اتوبوس */}
+                                <div className="col-12 col-md-9 nt-flex-column">
+                                  <div className="w-100 flex-grow-1 row align-items-center p-4">
+                                    {/* لوگو شرکت - دسکتاپ */}
+                                    <div className="col-2 d-none d-md-block">
+                                      <div className="nt-flex-center-center flex-md-column gap-3">
+                                        <img src={flight.companyLogo} alt={flight.companyName} width="70" style={{ borderRadius: '5px' }}/>
+                                        <div className="fs-5">{flight.companyName}</div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* لوگو شرکت - موبایل */}
+                                    <div className="col-2 d-md-none">
+                                      <div className="nt-flex-center-center flex-md-column gap-3">
+                                        <img src={flight.companyLogo} alt={flight.companyName} width="50" style={{ borderRadius: '5px' }}/>
+                                        <div className="fs-6">{flight.companyName}</div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* اطلاعات پرواز */}
+                                    <div className="col-10 col-md-10 nt-flex-column gap-4 flex-nowrap">
+                                      <div className="w-100 nt-flex-start-center flex-nowrap">
+                                        <div className="badge bg-light text-light-emphasis" style={{ backgroundColor: '#e8f5e8', color: '#2e7d32' }}>
+                                          {flight.carType}
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="w-100 row align-items-center">
+                                        {/* مبدا */}
+                                        <div className="col-4 col-md-4 fs-4 nt-flex gap-2 flex-column">
+                                          <div className="d-none d-md-block" style={{ fontSize: '14px', color: '#666' }}>{flight.originCity}</div>
+                                          <div className="small text-muted">{flight.originTerminal}</div>
+                                        </div>
+                                        
+                                        {/* مسیر و زمان */}
+                                        <div className="col-4 col-md-4">
+                                          <div className="nt-PathVisualizer reversed-icon" style={{ position: 'relative', height: '50px' }}>
+                                            <div className="nt-PathVisualizer-line" style={{ height: '2px', backgroundColor: '#dee2e6', position: 'absolute', top: '50%', left: '0', right: '0', transform: 'translateY(-50%)' }}></div>
+                                            <div className="text-center" style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: 'white', padding: '5px 15px', borderRadius: '20px', border: '1px solid #dee2e6' }}>
+                                              <div className="d-flex align-items-center gap-2">
+                                                <i className="ti ti-bus fs-5 text-primary" aria-hidden="true"></i>
+                                                <div className="fw-bold" style={{ fontSize: '18px' }}>{flight.timeMove}</div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        
+                                        {/* مقصد */}
+                                        <div className="col-4 col-md-4 fs-4 nt-flex gap-2 flex-column align-items-end">
+                                          <div className="d-none d-md-block" style={{ fontSize: '14px', color: '#666' }}>{flight.destinationCity}</div>
+                                          <div className="small text-muted text-end">{flight.destinationTerminal}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* تب‌های اطلاعات */}
+                                  {isExpanded && (
+                                    <div className="w-100 p-3 border-top">
+                                      <ul className="nav nav-pills gap-4 mb-3" role="tablist">
+                                        <li className="nav-item" role="presentation">
+                                          <button 
+                                            className={`nav-link ${currentTab === 0 ? 'active' : ''}`}
+                                            type="button"
+                                            onClick={() => handleTabChange(flight.id, 0)}
+                                          >
+                                            اطلاعات اتوبوس
+                                          </button>
+                                        </li>
+                                        <li className="nav-item" role="presentation">
+                                          <button 
+                                            className={`nav-link ${currentTab === 1 ? 'active' : ''}`}
+                                            type="button"
+                                            onClick={() => handleTabChange(flight.id, 1)}
+                                          >
+                                            قوانین استرداد
+                                          </button>
+                                        </li>
+                                      </ul>
+                                      
+                                      {/* اطلاعات اتوبوس */}
+                                      {currentTab === 0 && (
+                                        <div className="tab-pane fade show active">
+                                          <div className="container p-4">
+                                            <div className="row g-4">
+                                              <div className="col-6 col-md-4">
+                                                <div className="nt-flex-column gap-1">
+                                                  <div className="small text-muted">شماره اتوبوس</div>
+                                                  <div className="fw-bold">{flight.busCode}</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-4">
+                                                <div className="nt-flex-column gap-1">
+                                                  <div className="small text-muted">نوع اتوبوس</div>
+                                                  <div className="fw-bold">{flight.carType}</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-4">
+                                                <div className="nt-flex-column gap-1">
+                                                  <div className="small text-muted">بار مجاز</div>
+                                                  <div className="fw-bold">{flight.luggage}</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-4">
+                                                <div className="nt-flex-column gap-1">
+                                                  <div className="small text-muted">ترمینال مبدا</div>
+                                                  <div className="fw-bold">{flight.originTerminal}</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-4">
+                                                <div className="nt-flex-column gap-1">
+                                                  <div className="small text-muted">ترمینال مقصد</div>
+                                                  <div className="fw-bold">{flight.destinationTerminal}</div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                      
+                                      {/* قوانین استرداد */}
+                                      {currentTab === 1 && (
+                                        <div className="tab-pane fade">
+                                          <div className="container">
+                                            <div className="row">
+                                              <div className="col-12">
+                                                <div className="nt-flex-start-center gap-2 p-4">
+                                                  <i className="ti ti-info-circle fs-5" aria-hidden="true"></i>
+                                                  <div className="nt-flex-start-center gap-3 text-muted">
+                                                    درصد جریمه کسر شده بر اساس زمان اعلام کنسلی
+                                                    <a className="link-dark" href=""> قوانین استرداد </a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-3">
+                                                <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+                                                  <div className="fs-5 text-danger">30%</div>
+                                                  <div className="text-dark small">تا ۳ روز قبل از حرکت</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-3">
+                                                <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+                                                  <div className="fs-5 text-danger">50%</div>
+                                                  <div className="text-dark small">تا ۱ روز قبل از حرکت</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-3">
+                                                <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+                                                  <div className="fs-5 text-danger">70%</div>
+                                                  <div className="text-dark small">تا ۴ ساعت قبل از حرکت</div>
+                                                </div>
+                                              </div>
+                                              <div className="col-6 col-md-3">
+                                                <div className="text-center nt-flex-column-center-center gap-1 p-4 border rounded">
+                                                  <div className="fs-5 text-danger">80%</div>
+                                                  <div className="text-dark small">کمتر از ۴ ساعت</div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                  
+                                  {/* دکمه نمایش/مخفی کردن اطلاعات */}
+                                  <div className="w-100 p-3 border-top text-center">
+                                    <button 
+                                      className="btn btn-link"
+                                      onClick={() => toggleFlightTabs(flight.id)}
+                                    >
+                                      <i className={`ti ti-chevron-${isExpanded ? 'up' : 'down'} me-2`}></i>
+                                      {isExpanded ? 'مشاهده کمتر' : 'مشاهده جزئیات بیشتر'}
+                                    </button>
+                                  </div>
+                                </div>
+                                
+                                {/* قیمت و انتخاب - دسکتاپ */}
+                                <div className="col-12 col-md-3 d-none d-md-block search-content-dividerY">
+                                  <div className="nt-flex-column-center-center gap-3 px-3 py-5">
+                                    <div className="nt-flex-start-center gap-2">
+                                      <div className="fs-4 text-info fw-bold">{flight.price}</div>
+                                      <div className="small text-muted">تومان</div>
+                                    </div>
+                                    <div className="fw-bold">نرخ رسمی شرکت</div>
+                                    
+                                    <button 
+                                      className="btn btn-primary w-100" 
+                                      type="button"
+                                      onClick={() => handleSelectFlight(flight)}
+                                      style={{ padding: '10px', fontSize: '16px' }}
+                                    >
+                                      <i className="ti ti-ticket fs-5 me-2" aria-hidden="true"></i>
+                                      انتخاب اتوبوس
+                                    </button>
+                                    
+                                    <div className={`small ${flight.countFreeChairs > 3 ? 'text-success' : 'text-danger'}`}>
+                                      {flight.countFreeChairs} صندلی باقی مانده
+                                    </div>
+                                    
+                                    <div className="search-content-total py-4 w-100">
+                                      <div className="p-2 text-muted nt-flex-between-center border-bottom">
+                                        <span>بزرگسال</span>
+                                        <span className="nt-flex gap-1">
+                                          {flight.price}
+                                          <div className="small">تومان</div>
+                                        </span>
+                                      </div>
+                                      <div className="p-2 text-muted nt-flex-between-center">
+                                        <span>مجموع</span>
+                                        <span className="nt-flex gap-1">
+                                          {flight.price}
+                                          <div className="small">تومان</div>
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* قیمت و انتخاب - موبایل */}
+                                <div className="col-12 col-md-3 d-md-none search-content-dividerX">
+                                  <div className="row align-items-center py-3 border-top">
+                                    <div className="col-6">
+                                      <div className="nt-flex-column gap-2">
+                                        <div className="nt-flex-start-center gap-2">
+                                          <div className="fs-4 text-info fw-bold">{flight.price}</div>
+                                          <div className="small text-muted">تومان</div>
+                                        </div>
+                                        <div className="fw-bold small">نرخ رسمی شرکت</div>
+                                        <div className={`small ${flight.countFreeChairs > 3 ? 'text-success' : 'text-danger'}`}>
+                                          {flight.countFreeChairs} صندلی باقی مانده
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="col-6">
+                                      <button 
+                                        className="btn btn-primary w-100" 
+                                        type="button"
+                                        onClick={() => handleSelectFlight(flight)}
+                                      >
+                                        <i className="ti ti-ticket fs-5 me-2" aria-hidden="true"></i>
+                                        انتخاب
+                                      </button>
+                                    </div>
+                                    <div className="col-12 mt-3">
+                                      <div className="search-content-total py-3 border-top">
+                                        <div className="p-2 text-muted nt-flex-between-center border-bottom">
+                                          <span>بزرگسال</span>
+                                          <span className="nt-flex gap-1">
+                                            {flight.price}
+                                            <div className="small">تومان</div>
+                                          </span>
+                                        </div>
+                                        <div className="p-2 text-muted nt-flex-between-center">
+                                          <span>مجموع</span>
+                                          <span className="nt-flex gap-1">
+                                            {flight.price}
+                                            <div className="small">تومان</div>
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <li className="search-content-item container bg-white">
+                          <div className="text-center p-5">
+                            <i className="ti ti-bus-off fs-1 text-muted mb-3" aria-hidden="true"></i>
+                            <div className="fs-5 text-muted">اتوبوسی برای این تاریخ یافت نشد</div>
+                            <div className="mt-3">
+                              <button className="btn btn-primary" onClick={() => setSearchExpanded(true)}>
+                                <i className="ti ti-search me-2" aria-hidden="true"></i>
+                                تغییر تاریخ یا مسیر
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    </LocalizationProvider>
   );
-};
+}
 
 export default SearchPage;

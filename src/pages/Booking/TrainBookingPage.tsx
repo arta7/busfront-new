@@ -1128,7 +1128,7 @@ const TrainBookingPage: React.FC = () => {
 
       <Box
         sx={{
-          backgroundImage: 'url(/img/pages/index/booking/main-1.webp)',
+          backgroundImage: 'url(/img/pages/index/booking/sliderf.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           py: 8,

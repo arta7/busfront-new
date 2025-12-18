@@ -104,11 +104,11 @@ const ProfilePassengersPage: React.FC = () => {
 
   const profileMenuItems = [
     { icon: <PersonIcon />, label: t('newprofile.profile.sidebar.account'), active: false, href: '/profile' },
-    { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false, href: '/profile-orders' },
-    { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: false, href: '/profile-passengers' },
-    { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: false, href: '/profile-wishlist' },
-    { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: true, href: '/profile-ticketing' },
-    { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false, href: '/profile-transactions' }
+    { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false, href: '/profile-orders' }
+    // { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: true, href: '/profile-passengers' },
+    // { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: false, href: '/profile-wishlist' },
+    // { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: false, href: '/profile-ticketing' },
+    // { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false, href: '/profile-transactions' }
   ];
 
   const handleAddPassenger = () => {

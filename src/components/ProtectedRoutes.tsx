@@ -13,20 +13,6 @@ const UserProtectedRoute: React.FC<UserProtectedRoutetypes> = ({children}) => {
   const {isAuth, isloading} = useAuthStore();
    const { userData, setUserData } = useContext(UserContext);
 
-  // if (isloading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         height: '70vh',
-  //       }}
-  //     >
-  //       <CircularProgress size={100} />
-  //     </Box>
-  //   );
-  // }
 
 
 const isLoggedIn = userData[0].UserId == '' ? userData[0].UserId  : ''; 

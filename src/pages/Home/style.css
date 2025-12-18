@@ -1,0 +1,55 @@
+/* RTL Support */
+.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* تنظیمات برای RTL */
+  .rtl .dropdown-menu {
+    text-align: right;
+  }
+  
+  .rtl .form-control {
+    text-align: right;
+  }
+  
+  .rtl .btn-group > .btn {
+    float: right;
+  }
+  
+  .rtl .swiper-button-next {
+    left: 10px;
+    right: auto;
+  }
+  
+  .rtl .swiper-button-prev {
+    right: 10px;
+    left: auto;
+  }
+
+  
+  /* اضافه کردن این خطوط به App.css یا style.css */
+button[class*="link"], 
+button.btn-link {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  /* text-decoration: underline !important; */
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+button[class*="link"]:hover, 
+button.btn-link:hover {
+  text-decoration: none !important;
+  background: transparent !important;
+}
+
+/* برای دکمه‌های فوتر */
+.footer button.link {
+  /* color: var(--bs-link-color) !important; */
+}
+
+.footer button.link:hover {
+  color: var(--bs-link-hover-color) !important;
+}

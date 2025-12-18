@@ -101,12 +101,13 @@ export function VerifyAPI(_phone, _code, self, setLoading, userData, setUserData
         const DatesStep = myNextList;
         DatesStep[0].Name = response.data.data.firstName + ' ' + response.data.data.lastName;
         DatesStep[0].Token = response.data.data.token;
+        // DatesStep[0].Email = response.data.data?.email;
         setUserData(myNextList)
         localStorage.setItem('storageData', JSON.stringify(myNextList))
         // alert(response.data.message);
 
-        sendnavigate(true)
-        self('/')
+        // sendnavigate(true)
+        // self('/')
         // navigate('/Home')
         setLoading(false)
         setOpen(false)

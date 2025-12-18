@@ -52,6 +52,8 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import Header from '../../components/home/Header';
+import Footer from '../../components/home/Footer';
 
 const OrderRefundPage: React.FC = () => {
   const { t } = useTranslation();
@@ -65,62 +67,7 @@ const OrderRefundPage: React.FC = () => {
   const [refundOption, setRefundOption] = useState('option1');
   const [termsExpanded, setTermsExpanded] = useState(false);
 
-  // Header Component
-  const Header = () => (
-    <AppBar position="static" color="default" elevation={1}>
-      <Toolbar>
-        <Container maxWidth="lg">
-          <Grid container alignItems="center" spacing={2}>
-            <Grid item xs={6} md={2}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {isMobile && (
-                  <IconButton onClick={() => setMenuOpen(true)}>
-                    <MenuIcon />
-                  </IconButton>
-                )}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box
-                    component="img"
-                    src="/img/logo-m.png"
-                    alt={t('newprofile.header.title')}
-                    sx={{ width: 40, height: 40 }}
-                  />
-                  <Typography variant="h6" fontWeight="bold">
-                    {t('newprofile.header.title')}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
 
-            <Grid item md={8} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-                <Button color="inherit">{t('newprofile.header.services')}</Button>
-                <Button color="inherit">{t('newprofile.header.about')}</Button>
-                <Button color="inherit">{t('newprofile.header.contact')}</Button>
-                <Button color="inherit">{t('newprofile.header.stations')}</Button>
-                <Button color="inherit">{t('newprofile.header.bookedTickets')}</Button>
-              </Box>
-            </Grid>
-
-            <Grid item xs={6} md={2}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-                <IconButton onClick={() => setDarkMode(!darkMode)}>
-                  {darkMode ? <LightIcon /> : <DarkIcon />}
-                </IconButton>
-                <Button
-                  variant="outlined"
-                  startIcon={<PersonIcon />}
-                  onClick={() => setSignModalOpen(true)}
-                >
-                  {t('newprofile.auth.loginSignup')}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
-      </Toolbar>
-    </AppBar>
-  );
 
   // Breadcrumb Component
   const Breadcrumb = () => (
@@ -422,122 +369,7 @@ const OrderRefundPage: React.FC = () => {
     </Paper>
   );
 
-  // Footer Component
-  const Footer = () => (
-    <Box
-      component="footer"
-      sx={{
-        bgcolor: 'background.paper',
-        borderTop: 1,
-        borderColor: 'divider',
-        mt: 8
-      }}
-    >
-      <Container>
-        <Box sx={{ py: 8 }}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                  <Box
-                    component="img"
-                    src="/img/logo-m.png"
-                    alt={t('newprofile.header.title')}
-                    sx={{ width: 60, height: 60 }}
-                  />
-                  <Typography variant="h4" fontWeight="bold">
-                    {t('newprofile.header.title')}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PhoneIcon fontSize="small" />
-                  <Typography>
-                    {t('newprofile.common.phone')}: ۰۱۱۳۳۲۴۳۰۵۶ - ۰۹۱۱۷۹۷۶۸۵۵
-                  </Typography>
-                </Box>
-                
-                <Typography>
-                  {t('newprofile.common.address')}: مازندران، ساری، ترمینال دولت، پرتو سیر ایرانیان
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                  {t('newprofile.footer.description')}
-                </Typography>
-              </Box>
-            </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={4}>
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.about')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.header.about')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.header.contact')}</Button>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.customerService')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.footer.refundGuide')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.footer.terms')}</Button>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={6} md={4}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.footer.additionalInfo')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Button color="inherit" size="small">{t('newprofile.footer.corporateSales')}</Button>
-                    <Button color="inherit" size="small">{t('newprofile.footer.agencyCooperation')}</Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Box sx={{ 
-          borderTop: 1, 
-          borderColor: 'divider', 
-          py: 4,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 2
-        }}>
-          <Typography variant="body2" color="text.secondary">
-            {t('newprofile.footer.copyright')} • {t('newprofile.footer.designCredit')}
-          </Typography>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton size="small" color="primary">
-              <TelegramIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <TwitterIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <YouTubeIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <InstagramIcon />
-            </IconButton>
-            <IconButton size="small" color="primary">
-              <LinkedInIcon />
-            </IconButton>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
-  );
 
   // Auth Modal
   const AuthModal = () => (

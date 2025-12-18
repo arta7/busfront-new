@@ -1,597 +1,649 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Avatar,
-  Chip,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-  Paper,
-  Divider,
-  Badge,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  InputAdornment
-} from '@mui/material';
-import {
-  Wallet as WalletIcon,
-  Person as PersonIcon,
-  Luggage as LuggageIcon,
-  Groups as GroupsIcon,
-  Favorite as FavoriteIcon,
-  Headset as HeadsetIcon,
-  AccountBalance as BalanceIcon,
-  Search as SearchIcon,
-  Train as TrainIcon,
-  DirectionsBus as BusIcon,
-  DirectionsCar as CarIcon,
-  LocalShipping as VanIcon,
-  Flight as FlightIcon,
-  Hotel as HotelIcon,
-  BeachAccess as TourIcon,
-  Security as InsuranceIcon,
-  ChevronLeft as ChevronLeftIcon,
-  CalendarToday as CalendarIcon
-} from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFnsJalali } from '@mui/x-date-pickers/AdapterDateFnsJalali';
 
-interface Trip {
-  id: string;
-  orderNumber: string;
-  type: string;
-  status: 'finalized' | 'pending' | 'cancelled' | 'refunded';
-  from: string;
-  to: string;
-  date: string;
-  time: string;
-  passengers: number;
-  amount: number;
-  paymentMethod: string;
-  createdAt: string;
-}
 
-const ProfileOrdersPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+import React, { useState, useEffect, useContext } from 'react';
+import Header from './../../components/home/Header';
+import Footer from './../../components/home/Footer';
+import { Link,useNavigate  } from 'react-router-dom';
+import UserContext from './../../UserContext';
 
-  const [trips, setTrips] = useState<Trip[]>([
-    {
-      id: '1',
-      orderNumber: '123456789',
-      type: 'قطار',
-      status: 'finalized',
-      from: 'تهران',
-      to: 'مشهد',
-      date: '۱۴۰۳/۰۸/۲۰',
-      time: '۱۴:۳۰',
-      passengers: 2,
-      amount: 6800000,
-      paymentMethod: 'درگاه پرداخت',
-      createdAt: '۱۴۰۳/۰۸/۱۵'
-    },
-    {
-      id: '2',
-      orderNumber: '123456790',
-      type: 'اتوبوس',
-      status: 'pending',
-      from: 'اصفهان',
-      to: 'شیراز',
-      date: '۱۴۰۳/۰۸/۲۵',
-      time: '۰۸:۰۰',
-      passengers: 1,
-      amount: 4500000,
-      paymentMethod: 'کیف پول',
-      createdAt: '۱۴۰۳/۰۸/۱۸'
-    },
-    {
-      id: '3',
-      orderNumber: '123456791',
-      type: 'تاکسی',
-      status: 'cancelled',
-      from: 'تبریز',
-      to: 'ارومیه',
-      date: '۱۴۰۳/۰۸/۲۲',
-      time: '۱۶:۴۵',
-      passengers: 3,
-      amount: 1200000,
-      paymentMethod: 'کارت بانکی',
-      createdAt: '۱۴۰۳/۰۸/۲۰'
-    }
-  ]);
+const ProfileOrdersPage = () => {
+  const [orderNumber, setOrderNumber] = useState('');
+  const [orderType, setOrderType] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
-  const [filters, setFilters] = useState({
-    orderNumber: '',
-    orderType: '',
-    fromDate: null,
-    toDate: null
-  });
+  const { userData } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const orderTypes = [
-    'پرواز داخلی',
-    'پرواز خارجی',
-    'هتل داخلی',
-    'هتل خارجی',
-    'تور داخلی',
-    'تور خارجی',
-    'بیمه مسافرتی',
-    'تور گروهی',
-    'قطار',
-    'اتوبوس',
-    'تاکسی',
-    'ون'
-  ];
-
-  const profileMenuItems = [
-      { icon: <PersonIcon />, label: t('newprofile.profile.sidebar.account'), active: false, href: '/profile' },
-      { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false, href: '/profile-orders' },
-      { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: false, href: '/profile-passengers' },
-      { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: false, href: '/profile-wishlist' },
-      { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: true, href: '/profile-ticketing' },
-      { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false, href: '/profile-transactions' }
-    ];
-
-  const getTripIcon = (type: string) => {
-    switch (type) {
-      case 'قطار':
-        return <TrainIcon color="primary" />;
-      case 'اتوبوس':
-        return <BusIcon color="secondary" />;
-      case 'تاکسی':
-        return <CarIcon color="info" />;
-      case 'ون':
-        return <VanIcon color="warning" />;
-      case 'پرواز داخلی':
-      case 'پرواز خارجی':
-        return <FlightIcon color="success" />;
-      case 'هتل داخلی':
-      case 'هتل خارجی':
-        return <HotelIcon color="primary" />;
-      case 'تور داخلی':
-      case 'تور خارجی':
-      case 'تور گروهی':
-        return <TourIcon color="secondary" />;
-      case 'بیمه مسافرتی':
-        return <InsuranceIcon color="info" />;
-      default:
-        return <LuggageIcon color="primary" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'finalized':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      case 'cancelled':
-        return 'error';
-      case 'refunded':
-        return 'info';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'finalized':
-        return t('newprofile.orders.status.finalized');
-      case 'pending':
-        return t('newprofile.orders.status.pending');
-      case 'cancelled':
-        return t('newprofile.orders.status.cancelled');
-      case 'refunded':
-        return t('newprofile.orders.status.refunded');
-      default:
-        return status;
-    }
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString();
-  };
-
-  const filteredTrips = trips.filter(trip => {
-    if (filters.orderNumber && !trip.orderNumber.includes(filters.orderNumber)) {
-      return false;
-    }
-    if (filters.orderType && trip.type !== filters.orderType) {
-      return false;
-    }
-    // Add date filtering logic here when date pickers are implemented
-    return true;
-  });
-
-  const handleFilterChange = (field: string, value: any) => {
-    setFilters(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSearch = () => {
-    // Filter logic is already implemented in filteredTrips
-    console.log('Searching with filters:', filters);
-  };
-
-  const handleClearFilters = () => {
-    setFilters({
-      orderNumber: '',
-      orderType: '',
-      fromDate: null,
-      toDate: null
+  const handleViewDetails = (orderId,ticketList) => {
+    navigate('/profile-orders-detail', {
+      state: { orderId: orderId,ticketList:ticketList }
     });
   };
+  // توابع برای مدیریت تغییرات فرم
+  const handleOrderNumberChange = (e) => {
+    const value = e.target.value;
+    setOrderNumber(value);
+    filterOrders(value, orderType, fromDate, toDate);
+  };
 
-  const renderTripCard = (trip: Trip) => (
-    <Card key={trip.id} sx={{ mb: 2, border: 1, borderColor: 'divider' }}>
-      {/* Trip Header */}
-      <CardContent sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {getTripIcon(trip.type)}
-            <Typography variant="h6" fontWeight="bold">
-              {trip.type}
-            </Typography>
-          </Box>
-          <Chip
-            label={getStatusText(trip.status)}
-            color={getStatusColor(trip.status) as any}
-            size="small"
-          />
-        </Box>
-      </CardContent>
+  const handleOrderTypeChange = (e) => {
+    console.log('e : ', e.target.value)
+    const value = e.target.value;
+    setOrderType(value);
+    filterOrders(orderNumber, value, fromDate, toDate);
+  };
 
-      {/* Trip Details */}
-      <CardContent sx={{ p: 3 }}>
-        <Grid container spacing={3} alignItems="center">
-          <Grid item xs={12} md={8}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {t('newprofile.orders.orderNumber')}
-                </Typography>
-                <Typography variant="body1" fontWeight="bold">
-                  {trip.orderNumber}
-                </Typography>
-              </Box>
+  const handleFromDateChange = (e) => {
+    const value = e.target.value;
+    setFromDate(value);
+    filterOrders(orderNumber, orderType, value, toDate);
+  };
 
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {t('newprofile.orders.paidAmount')}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body1" fontWeight="bold">
-                    {formatPrice(trip.amount)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('newprofile.profile.currency')}
-                  </Typography>
-                </Box>
-              </Box>
+  const handleToDateChange = (e) => {
+    const value = e.target.value;
+    setToDate(value);
+    filterOrders(orderNumber, orderType, fromDate, value);
+  };
 
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {t('newprofile.orders.route')}
-                </Typography>
-                <Typography variant="body1" fontWeight="medium">
-                  {trip.from} → {trip.to}
-                </Typography>
-              </Box>
+  // تابع فیلتر سفارشات
+  const filterOrders = (number, type, from, to) => {
+    let filtered = orders;
 
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {t('newprofile.orders.dateTime')}
-                </Typography>
-                <Typography variant="body1" fontWeight="medium">
-                  {trip.date} - {trip.time}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
+    if (number) {
+      filtered = filtered.filter(order =>
+        order.requestNumber?.includes(number) ||
+        order.ticketNumber?.includes(number) ||
+        order.trackCode?.includes(number)
+      );
+    }
 
-          <Grid item xs={12} md={4}>
-            <Box sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ChevronLeftIcon />}
-                sx={{ borderRadius: 2 }}
-              >
-                {t('newprofile.orders.orderDetails')}
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
-  );
+    if (type && type !== "all") {
+      filtered = filtered.filter(order => {
+        if (type === "reserved") return order.status === '0';
+        if (type === "cancelled") return order.status !== '0';
+        return true;
+      });
+    }
+
+    if (from) {
+      filtered = filtered.filter(order => {
+        const orderDate = new Date(order.updatedAt);
+        const fromDate = new Date(from);
+        return orderDate >= fromDate;
+      });
+    }
+
+    if (to) {
+      filtered = filtered.filter(order => {
+        const orderDate = new Date(order.updatedAt);
+        const toDate = new Date(to);
+        return orderDate <= toDate;
+      });
+    }
+
+    setFilteredOrders(filtered);
+  };
+
+  // بارگذاری اولیه سفارشات از API
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://api.kalanholding.com/api/bus/bus-tickets', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': userData[0]?.Token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+
+        const data = await response.json();
+
+
+        // if (data.status != '0') {
+        //   throw new Error(data.message || 'خطا در دریافت بلیط‌ها');
+        // }
+
+        const tickets = data.data.filter(item=>item.busDetail !=null)  || [];
+        setOrders(tickets);
+        setFilteredOrders(tickets);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userData && userData[0]?.Token) {
+      fetchTickets();
+    } else {
+      setError('لطفاً ابتدا وارد حساب کاربری خود شوید');
+      setLoading(false);
+    }
+  }, [userData]);
+
+  // توابع کمکی
+  const formatPrice = (price) => {
+    if (!price) return '۰';
+    return new Intl.NumberFormat('fa-IR').format(price);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'نامشخص';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fa-IR');
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return 'نامشخص';
+    return timeString;
+  };
+
+  const getStatusText = (status) => {
+    const statusMap = {
+      '0': { text: 'رزرو شده', className: 'bg-success text-success' },
+      '1': { text: 'لغو شده', className: 'bg-danger text-danger' },
+      '2': { text: 'صادر شده', className: 'bg-info text-info' },
+      '3': { text: 'در انتظار پرداخت', className: 'bg-warning text-warning' }
+    };
+    return statusMap[status];
+  };
+
+  const getGenderText = (gender) => {
+    return gender === '2' ? 'آقا' : 'خانم';
+  };
+
+  const getUserName = () => {
+    if (userData && userData[0]) {
+      return `${userData[0]?.firstName || ''} ${userData[0]?.lastName || ''}`.trim() || 'کاربر';
+    }
+    return 'کاربر';
+  };
+
+  const getUserPhone = () => {
+    if (userData && userData[0]) {
+      return userData[0]?.Mobile || 'نامشخص';
+    }
+    return 'نامشخص';
+  };
+
+  // تابع برای تعداد مسافران
+  const getPassengersCount = (passengers) => {
+    return passengers?.length || 0;
+  };
+
+  // if (error) {
+  //   return (
+  //     <>
+  //       <Header />
+  //       <main className="main" style={{ marginTop: '30px' }}>
+  //         <div className="container py-5">
+  //           <div className="alert alert-danger text-center">
+  //             <i className="ti ti-alert-circle fs-4 me-2" aria-hidden="true"></i>
+  //             {error}
+  //             <div className="mt-3">
+  //               <button 
+  //                 className="btn btn-primary me-2"
+  //                 onClick={() => window.location.reload()}
+  //               >
+  //                 تلاش مجدد
+  //               </button>
+  //               <Link to="/login" className="btn btn-outline-primary">
+  //                 ورود به حساب کاربری
+  //               </Link>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </main>
+  //       <Footer />
+  //     </>
+  //   );
+  // }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <LocalizationProvider dateAdapter={AdapterDateFnsJalali}>
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Grid container spacing={3}>
-            {/* Sidebar */}
-            <Grid item xs={12} md={3}>
-              <Card sx={{ position: 'sticky', top: 100 }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  {/* Avatar */}
-                  <Box sx={{ position: 'relative', display: 'inline-block', mb: 2 }}>
-                    <Avatar
-                      src="/img/layouts/avatar/m1.png"
-                      sx={{ 
-                        width: 80, 
-                        height: 80, 
-                        border: 2, 
-                        borderColor: 'primary.main',
-                        mx: 'auto'
-                      }}
-                    />
-                    <Badge
-                      color="success"
-                      badgeContent="✓"
-                      sx={{
-                        '& .MuiBadge-badge': {
-                          fontSize: 16,
-                          height: 24,
-                          minWidth: 24,
-                          borderRadius: '50%'
-                        }
-                      }}
-                    >
-                      <Box />
-                    </Badge>
-                  </Box>
+    <>
+      <Header />
 
-                  {/* User Info */}
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    علی محمدی
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    ۰۹۱۲۱۲۳۴۵۶۷
-                  </Typography>
-
-                  {/* Balance Card */}
-                  <Card 
-                    sx={{ 
-                      backgroundColor: 'secondary.main', 
-                      color: 'white', 
-                      mt: 2, 
-                      mb: 3,
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                    }}
-                  >
-                    <CardContent sx={{ p: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <WalletIcon />
-                          <Box>
-                            <Typography variant="body2" fontWeight="medium">
-                              {t('newprofile.profile.accountBalance')}
-                            </Typography>
-                            <Button 
-                              variant="contained" 
-                              size="small" 
-                              sx={{ 
-                                mt: 1,
-                                backgroundColor: 'white', 
-                                color: 'secondary.main',
-                                '&:hover': {
-                                  backgroundColor: 'grey.100'
-                                }
-                              }}
-                              href="/profile-transactions"
-                            >
-                              <Typography variant="caption" fontWeight="bold">
-                                {t('newprofile.profile.increaseBalance')}
-                              </Typography>
-                            </Button>
-                          </Box>
-                        </Box>
-                        <Box sx={{ textAlign: 'left' }}>
-                          <Typography variant="h6" fontWeight="bold">
-                            ۰
-                          </Typography>
-                          <Typography variant="body2">
-                            {t('newprofile.profile.currency')}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-
-                  {/* Menu Items */}
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    sx={{ mb: 2, textAlign: 'right', fontWeight: 'bold' }}
-                  >
-                    {t('newprofile.profile.userMenu')}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {profileMenuItems.map((item, index) => (
-                      <Button
-                        key={index}
-                        startIcon={item.icon}
-                        variant={item.active ? "contained" : "outlined"}
-                        fullWidth
-                        sx={{ 
-                          justifyContent: 'flex-start',
-                          borderRadius: 2
-                        }}
-                        href={item.href}
+      <main className="main" style={{ marginTop: '30px' }}>
+        <div className="profile">
+          <div className="container">
+            <div className="row py-5">
+              {/* سایدبار دسکتاپ */}
+              <aside className="col-12 col-md-3 d-none d-md-block">
+                <div className="bg-white border rounded py-5 px-4">
+                  <div className="nt-flex-column-center-center mb-4">
+                    <div className="border border-primary rounded-circle position-relative">
+                      <span
+                        className="position-absolute top-0 start-0 translate-middle badge rounded bg-success"
+                        title="تایید شده"
                       >
-                        {item.label}
-                      </Button>
-                    ))}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+                        <i className="ti ti-checks fs-5" aria-hidden="true"></i>
+                        <span className="visually-hidden">تایید شده</span>
+                      </span>
+                      <img src="./img/layouts/avatar/m1.png" alt="پرتو سیر" />
+                    </div>
+                    <div className="nt-flex-column">
+                      <div className="profile-title">{getUserName()}</div>
+                      <div className="text-muted">{getUserPhone()}</div>
+                    </div>
+                  </div>
 
-            {/* Main Content */}
-            <Grid item xs={12} md={9}>
-              {/* Header */}
-              <Card sx={{ mb: 3 }}>
-                <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <LuggageIcon color="primary" sx={{ fontSize: 32 }} />
-                    <Typography variant="h4" fontWeight="bold">
-                      {t('newprofile.orders.pageTitle')}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
+                  {/* بخش کیف پول */}
 
-              {/* Filters */}
-              <Card sx={{ mb: 3 }}>
-                <CardContent sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {t('newprofile.orders.filterTitle')}
-                  </Typography>
-                  
-                  <Grid container spacing={2}>
-                    {/* Order Number */}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        fullWidth
-                        label={t('newprofile.orders.orderNumber')}
-                        value={filters.orderNumber}
-                        onChange={(e) => handleFilterChange('orderNumber', e.target.value)}
-                        placeholder={t('newprofile.orders.orderNumberPlaceholder')}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon color="action" />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </Grid>
 
-                    {/* Order Type */}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        select
-                        fullWidth
-                        label={t('newprofile.orders.orderType')}
-                        value={filters.orderType}
-                        onChange={(e) => handleFilterChange('orderType', e.target.value)}
-                      >
-                        <MenuItem value="">
-                          {t('newprofile.orders.selectOrderType')}
-                        </MenuItem>
-                        {orderTypes.map((type) => (
-                          <MenuItem key={type} value={type}>
-                            {type}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </Grid>
+                  <div className="text-muted fw-bold small mb-3">منو کاربری</div>
+                  <nav className="profile-menu">
+                    <Link className="btn btn-outline-light" to="/profile">
+                      <i className="ti ti-user fs-4" aria-hidden="true"></i>
+                      حساب کاربری
+                    </Link>
+                    <Link className="btn btn-outline-light active" to="/profile-orders">
+                      <i className="ti ti-luggage fs-4" aria-hidden="true"></i>
+                      سفر های من
+                    </Link>
+                    {/* <Link className="btn btn-outline-light" to="/profile-passengers">
+                      <i className="ti ti-users-group fs-4" aria-hidden="true"></i>
+                      لیست های مسافران
+                    </Link>
+                    <Link className="btn btn-outline-light" to="/profile-wishlist">
+                      <i className="ti ti-heart fs-4" aria-hidden="true"></i>
+                      علاقه مندی ها
+                    </Link>
+                    <Link className="btn btn-outline-light" to="/profile-ticketing">
+                      <i className="ti ti-headset fs-4" aria-hidden="true"></i>
+                      درخواست پشتیبانی
+                    </Link>
+                    <Link className="btn btn-outline-light" to="/profile-transactions">
+                      <i className="ti ti-businessplan fs-4" aria-hidden="true"></i>
+                      موجودی و اعتبار من
+                    </Link> */}
+                  </nav>
+                </div>
+              </aside>
 
-                    {/* Date Range */}
-                    <Grid item xs={12} md={4}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <DatePicker
-                          label={t('newprofile.orders.fromDate')}
-                          value={filters.fromDate}
-                          onChange={(newValue) => handleFilterChange('fromDate', newValue)}
-                          slotProps={{
-                            textField: {
-                              fullWidth: true,
-                              InputProps: {
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <CalendarIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }
-                            }
-                          }}
+              {/* بخش اصلی محتوا */}
+              <section className="col-12 col-md-9">
+                {/* دکمه منو برای موبایل */}
+                <div className="d-md-none mb-3">
+                  <button
+                    className="btn btn-light"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasProfile"
+                  >
+                    <i className="ti ti-menu fs-4" aria-hidden="true"></i>
+                    <div className="fw-bold">منو کاربری</div>
+                  </button>
+                </div>
+
+                {/* بخش سفارشات */}
+                <div className="profile-row">
+                  <div className="row align-items-center g-3">
+                    <div className="col-12 col-md">
+                      <div className="profile-title mb-4">
+                        <i className="ti ti-ticket fs-4 me-2" aria-hidden="true"></i>
+                        سفر های من
+                        <span className="badge bg-primary ms-2">
+                          {filteredOrders.length} سفارش
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* فرم جستجوی سفارشات */}
+                  <div className="row pb-4 border-bottom">
+                    {/* فیلد شماره سفارش */}
+                    <div className="col-12 col-md-3">
+                      <div className="text-muted mb-2 small">شماره سفارش/بلیط</div>
+                      <div className="form-floating">
+                        <input
+                          className="form-control"
+                          id="orderNumber"
+                          type="text"
+                          placeholder="شماره سفارش"
+                          value={orderNumber}
+                          onChange={handleOrderNumberChange}
                         />
-                        <DatePicker
-                          label={t('newprofile.orders.toDate')}
-                          value={filters.toDate}
-                          onChange={(newValue) => handleFilterChange('toDate', newValue)}
-                          slotProps={{
-                            textField: {
-                              fullWidth: true,
-                              InputProps: {
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <CalendarIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }
-                            }
-                          }}
-                        />
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </CardContent>
+                        <label htmlFor="orderNumber">شماره سفارش/بلیط</label>
+                      </div>
+                    </div>
 
-                {/* Filter Actions */}
-                <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                    <Button
-                      variant="outlined"
-                      onClick={handleClearFilters}
-                    >
-                      {t('newprofile.common.clear')}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={handleSearch}
-                      startIcon={<SearchIcon />}
-                    >
-                      {t('newprofile.common.search')}
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
+                    {/* فیلد وضعیت سفارش */}
+                    <div className="col-12 col-md-3">
+                      <div className="text-muted mb-2 small">وضعیت سفارش</div>
+                      <div className="form-floating">
+                        <select
+                          className="form-select"
+                          id="orderType"
+                          value={orderType}
+                          onChange={handleOrderTypeChange}
+                        >
+                          <option value="all">همه وضعیت‌ها</option>
+                          <option value="reserved">رزرو شده</option>
+                          <option value="cancelled">لغو شده</option>
+                          <option value="issued">صادر شده</option>
+                        </select>
+                        <label htmlFor="orderType">وضعیت سفارش</label>
+                      </div>
+                    </div>
 
-              {/* Trips List */}
-              <Card>
-                <CardContent sx={{ p: 3 }}>
-                  {filteredTrips.length > 0 ? (
-                    <Box>
-                      {filteredTrips.map(renderTripCard)}
-                    </Box>
-                  ) : (
-                    /* Empty State */
-                    <Box sx={{ textAlign: 'center', py: 8 }}>
-                      <LuggageIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-                      <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        {t('newprofile.orders.emptyTitle')}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {t('newprofile.orders.emptyMessage')}
-                      </Typography>
-                    </Box>
+                    {/* فیلد تاریخ سفارش */}
+                    <div className="col-12 col-md-6">
+                      <div className="text-muted mb-2 small">تاریخ سفارش</div>
+                      <div className="input-group">
+                        <div className="form-floating">
+                          <input
+                            className="form-control"
+                            id="from"
+                            type="date"
+                            placeholder="از تاریخ"
+                            value={fromDate}
+                            onChange={handleFromDateChange}
+                          />
+                          <label htmlFor="from">از تاریخ</label>
+                        </div>
+                        <span className="input-group-text">تا</span>
+                        <div className="form-floating">
+                          <input
+                            className="form-control"
+                            id="to"
+                            type="date"
+                            placeholder="تا تاریخ"
+                            value={toDate}
+                            onChange={handleToDateChange}
+                          />
+                          <label htmlFor="to">تا تاریخ</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Loading State */}
+                  {loading && (
+                    <div className="row py-4">
+                      <div className="col-12 text-center py-5">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">در حال بارگذاری...</span>
+                        </div>
+                        <div className="text-muted mt-3">در حال دریافت اطلاعات سفارشات...</div>
+                      </div>
+                    </div>
                   )}
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Container>
-      </LocalizationProvider>
-    </Box>
+
+                  {/* لیست سفارشات */}
+                  {!loading && filteredOrders.length > 0 && (
+                    <div className="row py-4">
+                      {filteredOrders.map((order) => {
+                        const statusInfo = getStatusText(order.status);
+                        return (
+                          <div key={order.id} className="col-12 mb-4">
+                            <div className="border rounded shadow-sm">
+                              {/* هدر سفارش */}
+                              <div className="nt-flex-between-center border-bottom p-3 bg-light">
+                                <div className="nt-flex align-items-center">
+                                  <i className="ti ti-bus fs-4 text-primary me-2" aria-hidden="true"></i>
+                                  <div>
+                                    <div className="fs-5 fw-bold">سفر اتوبوسی</div>
+                                    <div className="text-muted small">
+                                      <i className="ti ti-calendar me-1" aria-hidden="true"></i>
+                                      {formatDate(order.updatedAt)}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="d-flex flex-column align-items-end">
+                                  <div className={`nt-badge ${statusInfo.className} small mb-2`}>
+                                    {statusInfo.text}
+                                  </div>
+                                  <div className="text-muted small">
+                                    کد رهگیری: {order.trackCode || 'نامشخص'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* اطلاعات اصلی */}
+                              <div className="p-3 border-bottom">
+                                <div className="row">
+                                  {/* اطلاعات مسیر */}
+                                  <div className="col-md-6 mb-3">
+                                    <div className="d-flex align-items-start mb-2">
+                                      <i className="ti ti-route fs-5 text-primary me-2 mt-1" aria-hidden="true"></i>
+                                      <div>
+                                        <div className="text-muted small">مسیر</div>
+                                        <div className="fw-bold fs-5">
+                                          {order.busDetail?.originCity || 'نامشخص'}
+                                          <i className="ti ti-arrow-right mx-2 text-muted" aria-hidden="true"></i>
+                                          {order.busDetail?.destinationCity || 'نامشخص'}
+                                        </div>
+                                        <div className="text-muted small mt-1">
+                                          ترمینال: {order.busDetail?.originTerminal} → {order.busDetail?.destinationTerminal}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* اطلاعات زمان و تاریخ */}
+                                  <div className="col-md-6 mb-3">
+                                    <div className="row">
+                                      <div className="col-6">
+                                        <div className="text-muted small">تاریخ حرکت</div>
+                                        <div className="fw-bold">{order.busDetail?.dateMove || 'نامشخص'}</div>
+                                      </div>
+                                      <div className="col-6">
+                                        <div className="text-muted small">ساعت حرکت</div>
+                                        <div className="fw-bold">{formatTime(order.busDetail?.timeMove)}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* اطلاعات شرکت و نوع ماشین */}
+                                  <div className="col-md-6">
+                                    <div className="text-muted small">شرکت حمل‌ونقل</div>
+                                    <div className="fw-bold">
+                                      <i className="ti ti-building me-1" aria-hidden="true"></i>
+                                      {order.busDetail?.companyName || 'نامشخص'}
+                                      <span className="badge bg-secondary ms-2">
+                                        {order.busDetail?.carType || 'نامشخص'}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* اطلاعات مسافران */}
+                                  <div className="col-md-6">
+                                    <div className="text-muted small">مسافران</div>
+                                    <div className="fw-bold">
+                                      <i className="ti ti-users me-1" aria-hidden="true"></i>
+                                      {getPassengersCount(order.passengers)} نفر
+                                    </div>
+                                    {order.passengers?.map(passenger => (
+                                      <div key={passenger.id} className="badge bg-light text-dark me-1 mt-1">
+                                        {passenger.firstName} {passenger.lastName} (صندلی {passenger.seatNumber})
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* فوتتر سفارش */}
+                              <div className="nt-flex-between-center p-3 bg-light">
+                                <div className="nt-flex-start-center gap-4 flex-wrap">
+                                  <div className="nt-flex flex-column">
+                                    <div className="text-muted small">شماره سفارش</div>
+                                    <div className="fw-bold">{order.requestNumber || 'نامشخص'}</div>
+                                  </div>
+                                  <div className="nt-flex flex-column">
+                                    <div className="text-muted small">شماره بلیط</div>
+                                    <div className="fw-bold">{order.ticketNumber || 'نامشخص'}</div>
+                                  </div>
+                                  <div className="nt-flex flex-column">
+                                    <div className="text-muted small">مبلغ پرداختی</div>
+                                    <div className="fw-bold text-success">
+                                      {formatPrice(order.price)} تومان
+                                    </div>
+                                  </div>
+                                  {order.beforeDiscountPrice && order.beforeDiscountPrice > order.price && (
+                                    <div className="nt-flex flex-column">
+                                      <div className="text-muted small">قیمت اصلی</div>
+                                      <div className="fw-bold text-decoration-line-through text-muted">
+                                        {formatPrice(order.beforeDiscountPrice)} تومان
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                                {/* <Link 
+                                  className="btn btn-primary d-flex align-items-center" 
+                                  to={`/profile-orders-detail/${order.id}`}
+                                >
+                                  <i className="ti ti-eye me-2" aria-hidden="true"></i>
+                                  مشاهده جزییات
+                                </Link> */}
+                                <button
+                                  className="btn btn-primary d-flex align-items-center"
+                                  onClick={() => {
+                                    console.log('order',order)
+                                    handleViewDetails(order.id,order)
+                                  
+                                  }}
+                                  type="button"
+                                >
+                                  <i className="ti ti-eye me-2" aria-hidden="true"></i>
+                                  مشاهده جزییات
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* پیام در صورت نبودن سفارش */}
+                  {!loading && filteredOrders.length === 0 && orders.length === 0 && (
+                   <div className="row py-4">
+                   <div className="col-12 text-center py-5">
+                     <div className="alert alert-warning">
+                       <i className="ti ti-search-off fs-4 me-2" aria-hidden="true"></i>
+                       <div className="fs-5">هیچ سفارشی با فیلترهای انتخابی یافت نشد</div>
+                          <div className="mt-2">
+                            می‌توانید از 
+                            <Link to="/" className="mx-1">صفحه اصلی</Link>
+                            برای خرید بلیط اقدام کنید.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* پیام در صورت نبودن سفارش پس از فیلتر */}
+                  {!loading && filteredOrders.length === 0 && orders.length > 0 && (
+                    <div className="row py-4">
+                      <div className="col-12 text-center py-5">
+                        <div className="alert alert-warning">
+                          <i className="ti ti-search-off fs-4 me-2" aria-hidden="true"></i>
+                          <div className="fs-5">هیچ سفارشی با فیلترهای انتخابی یافت نشد</div>
+                          <button
+                            className="btn btn-sm btn-outline-primary mt-3"
+                            onClick={() => {
+                              setOrderNumber('');
+                              setOrderType('');
+                              setFromDate('');
+                              setToDate('');
+                              setFilteredOrders(orders);
+                            }}
+                          >
+                            حذف فیلترها
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Offcanvas Profile برای موبایل */}
+      <div className="offcanvas offcanvas-start" id="offcanvasProfile" tabIndex="-1">
+        <div className="offcanvas-header">
+          <h5 className="offcanvas-title">پروفایل کاربری</h5>
+          <button className="btn-close" type="button" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div className="offcanvas-body">
+          <div className="p-2">
+            <div className="nt-flex-column-center-center mb-4">
+              <div className="border border-primary rounded-circle position-relative">
+                <span className="position-absolute top-0 start-0 translate-middle badge rounded bg-success">
+                  <i className="ti ti-checks fs-5" aria-hidden="true"></i>
+                </span>
+                <img src="./img/layouts/avatar/m1.png" alt="پرتو سیر" />
+              </div>
+              <div className="nt-flex-column">
+                <div className="profile-title">{getUserName()}</div>
+                <div className="text-muted">{getUserPhone()}</div>
+              </div>
+            </div>
+
+            {/* بخش کیف پول در منوی موبایل */}
+            {/* <div className="bg-secondary text-white rounded p-3 mb-4">
+              <div className="nt-flex-between-start gap-2">
+                <div className="nt-flex-column gap-3">
+                  <div className="nt-flex text-bg-light">
+                    <i className="ti ti-wallet fs-3" aria-hidden="true"></i>
+                    موجودی حساب 
+                  </div>
+                  <Link className="btn btn-sm btn-secondary" to="/profile-transactions">
+                    <i className="ti ti-plus fs-5" aria-hidden="true"></i>
+                    <span className="small">افزایش موجودی</span>
+                  </Link>
+                </div>
+                <div className="nt-flex">
+                  <div className="badge text-bg-light">۰</div>
+                  <div className="small text-bg-light">تومان</div>
+                </div>
+              </div>
+            </div> */}
+
+            <div className="text-muted fw-bold small mb-3">منو کاربری</div>
+            <nav className="profile-menu">
+              <Link className="btn btn-outline-light" to="/profile">
+                <i className="ti ti-user fs-4" aria-hidden="true"></i>
+                حساب کاربری
+              </Link>
+              <Link className="btn btn-outline-light active" to="/profile-orders">
+                <i className="ti ti-luggage fs-4" aria-hidden="true"></i>
+                سفر های من
+              </Link>
+              {/* <Link className="btn btn-outline-light" to="/profile-passengers">
+                <i className="ti ti-users-group fs-4" aria-hidden="true"></i>
+                لیست های مسافران
+              </Link>
+              <Link className="btn btn-outline-light" to="/profile-wishlist">
+                <i className="ti ti-heart fs-4" aria-hidden="true"></i>
+                علاقه مندی ها
+              </Link>
+              <Link className="btn btn-outline-light" to="/profile-ticketing">
+                <i className="ti ti-headset fs-4" aria-hidden="true"></i>
+                درخواست پشتیبانی
+              </Link>
+              <Link className="btn btn-outline-light" to="/profile-transactions">
+                <i className="ti ti-businessplan fs-4" aria-hidden="true"></i>
+                موجودی و اعتبار من
+              </Link> */}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </>
   );
 };
 

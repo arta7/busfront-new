@@ -108,12 +108,19 @@ const ProfileTransactionsPage: React.FC = () => {
   const [cashInAmount, setCashInAmount] = useState('');
 
   const profileMenuItems = [
-    { icon: <PersonIcon />, label: t('newprofile.profile.sidebar.account'), active: false },
-       { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false },
-       { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: false },
-       { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: true },
-       { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: false },
-       { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false }
+    // { icon: <PersonIcon />, label: t('newprofile.profile.sidebar.account'), active: false },
+    //    { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false },
+    //    { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: false },
+    //    { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: true },
+    //    { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: false },
+    //    { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false }
+
+    { icon: <PersonIcon />, label: t('newprofile.profile.sidebar.account'), active: false, href: '/profile' },
+    { icon: <LuggageIcon />, label: t('newprofile.profile.sidebar.myTrips'), active: false, href: '/profile-orders' },
+    // { icon: <GroupsIcon />, label: t('newprofile.profile.sidebar.passengers'), active: false, href: '/profile-passengers' },
+    { icon: <FavoriteIcon />, label: t('newprofile.profile.sidebar.wishlist'), active: true, href: '/profile-wishlist' },
+    { icon: <HeadsetIcon />, label: t('newprofile.profile.sidebar.support'), active: false, href: '/profile-ticketing' },
+    { icon: <BalanceIcon />, label: t('newprofile.profile.sidebar.balance'), active: false, href: '/profile-transactions' }
   ];
 
   const handleCashIn = () => {

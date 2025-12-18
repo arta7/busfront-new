@@ -1,0 +1,189 @@
+.order-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* هدر */
+  .header {
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .header-logo {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .header-logo:hover {
+    opacity: 0.8;
+  }
+  
+  .header-nav .nav-link,
+  .header-nav .dropdown-toggle {
+    color: #495057;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+  }
+  
+  .header-nav .nav-link:hover,
+  .header-nav .dropdown-toggle:hover {
+    color: #0d6efd;
+  }
+  
+  .header-user {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+  }
+  
+  .header-user:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+  }
+  
+  /* نان بریده */
+  .order-breadcrumb {
+    padding: 1rem 0;
+  }
+  
+  .order-breadcrumb .breadcrumb-item {
+    font-size: 0.9rem;
+  }
+  
+  .order-breadcrumb .breadcrumb-item.active {
+    color: #0d6efd;
+  }
+  
+  /* محتوای اصلی */
+  .main {
+    flex: 1;
+  }
+  
+  .order-row {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+  }
+  
+  .order-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #212529;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* نشان‌های سفارشی */
+  .nt-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* مسیرنمای پرواز */
+  .nt-PathVisualizer {
+    position: relative;
+    height: 2px;
+    background-color: #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nt-PathVisualizer-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #6c757d;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .nt-PathVisualizer.reversed-icon i {
+    transform: rotate(180deg);
+  }
+  
+  /* فوتر */
+  .footer {
+    background-color: #f8f9fa;
+    position: relative;
+    margin-top: auto;
+  }
+  
+  .footer-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .footer-copyright {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .footer-badge img {
+    max-width: 80px;
+    height: auto;
+    border-radius: 4px;
+  }
+  
+  /* مودال‌ها */
+  .nt-modal-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  /* استایل‌های کلی */
+  .link {
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .link:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
+  
+  /* استایل برای RTL */
+  [dir="rtl"] .me-2 {
+    margin-left: 0.5rem;
+    margin-right: 0 !important;
+  }
+  
+  [dir="rtl"] .ms-2 {
+    margin-right: 0.5rem;
+    margin-left: 0 !important;
+  }
+  
+  /* استایل‌های واکنش‌گرا */
+  @media (max-width: 768px) {
+    .header-nav {
+      display: none;
+    }
+    
+    .order-title {
+      font-size: 1.25rem;
+    }
+    
+    .footer-badge img {
+      max-width: 60px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .header-user div {
+      display: none;
+    }
+    
+    .order-breadcrumb .breadcrumb-item {
+      font-size: 0.8rem;
+    }
+  }

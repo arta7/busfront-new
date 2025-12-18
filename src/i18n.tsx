@@ -371,8 +371,11 @@ i18n.use(initReactI18next).init({
       "infantDesc": "(۱۰ روز تا ۲ سال)",
       "increase": "تعداد را افزایش دهید",
       "decrease": "تعداد را کاهش دهید",
+      "loading":'بارگزاری'
       
     },
+
+
     "services": {
       "bus": "اتوبوس",
       "taxi": "تاکسی",
@@ -407,6 +410,7 @@ i18n.use(initReactI18next).init({
     "readyToTravelDesc": "چمدونت آماده‌ست، بلیتت چی؟ با رزرو آنلاین، از بهترین قیمت‌ها و صندلی‌ها بهره‌مند شو. علاوه بر این، می‌تونی با خیال راحت، جزئیات سفرت رو مدیریت کنی.",
     "onlineOrder": "سفارش آنلاین"
   },
+  
   "cities": {
     "tehran": "تهران",
     "ahvaz": "اهواز",
@@ -419,8 +423,93 @@ i18n.use(initReactI18next).init({
   }
 },
 newprofile:{
-   
-  
+    "validateAuth": {
+      "signInRequired": "ورود الزامی است",
+      "verifyCode": "تایید کد",
+      "pleaseSignIn": "لطفا برای ادامه وارد شوید",
+      "signInMessage": "برای دسترسی به این صفحه نیاز به ورود دارید.",
+      "phoneNumber": "شماره تلفن",
+      "phonePlaceholder": "شماره تلفن خود را وارد کنید",
+      "termsText": "با ادامه، شما با",
+      "termsLink": "شرایط و ضوابط",
+      "sendCode": "ارسال کد تایید",
+      "continueBrowsing": "ادامه مرور",
+      "enterCode": "وارد کردن کد تایید",
+      "codeSentTo": "کد تایید به شماره",
+      "verificationCode": "کد تایید",
+      "codePlaceholder": "کد ۶ رقمی را وارد کنید",
+      "resendCode": "ارسال مجدد کد",
+      "resendCountdown": "ارسال مجدد در {{count}} ثانیه",
+      "verifySignIn": "تایید و ورود",
+      "back": "بازگشت",
+      "sending": "در حال ارسال...",
+      "verifying": "در حال تایید...",
+      "enterPhoneAlert": "لطفا شماره تلفن خود را وارد کنید",
+      "sendCodeError": "ارسال کد تایید ناموفق بود. لطفا مجددا تلاش کنید.",
+      "enterCodeAlert": "لطفا کد تایید را وارد کنید",
+      "invalidCodeError": "کد تایید نامعتبر است. لطفا مجددا تلاش کنید.",
+      "resendError": "ارسال مجدد کد ناموفق بود. لطفا مجددا تلاش کنید."
+    },
+      "mapList": {
+        "title": "شعب ما",
+        "subtitle": "شعب ما را در سراسر کشور پیدا کنید",
+        "branch": "شعبه",
+        "address": "آدرس",
+        "phone": "تلفن",
+        "manager": "مدیر",
+        "mapUnavailable": "نقشه در دسترس نیست",
+        "viewOnNeshan": "مشاهده در نقشه نشان",
+        "status": {
+          "active": "فعال"
+        },
+        "group1": "شعب شرقی",
+        "group2": "شعب مرکزی",
+        "group3": "شعب غربی",
+        "group4": "شعب شمالی",
+        "info": {
+          "title": "اطلاعات مهم",
+          "description": "تمامی شعب ما مجهز به امکانات مدرن و پرسنل حرفه‌ای برای خدمت‌رسانی بهتر به شما هستند."
+        },
+        "services": {
+          "title": "خدمات ما",
+          "description": "ما خدمات حمل و نقل مختلفی ارائه می‌دهیم از جمله:",
+          "bus": "حمل و نقل اتوبوسی",
+          "taxi": "سرویس تاکسی",
+          "van": "سرویس ون",
+          "cargo": "حمل بار",
+          "map": "پوشش سراسری"
+        },
+        "branches": {
+          "Taybad": "تایباد",
+          "Zabol": "زابل",
+          "Qom": "قم",
+          "Sari": "ساری",
+          "Ilam": "ایلام",
+          "Ahvaz": "اهواز",
+          "Mashhad": "مشهد",
+          "Chabahar": "چابهار"
+        },
+        "addresses": {
+          "Taybad": "جاده اصلی تایباد، کنار پمپ بنزین",
+          "Zabol": "مرکز شهر زابل، منطقه تجاری",
+          "Qom": "قم، جاده جمکران",
+          "Sari": "ساری، مازندران",
+          "Ilam": "مرکز شهر ایلام",
+          "Ahvaz": "اهواز، خوزستان",
+          "Mashhad": "مشهد، خراسان رضوی",
+          "Chabahar": "بندر چابهار، سیستان و بلوچستان"
+        },
+        "managers": {
+          "Taybad": "محمد رضا",
+          "Zabol": "علی حسینی",
+          "Qom": "سعید محمدی",
+          "Sari": "حسن کریمی",
+          "Ilam": "رضا احمدی",
+          "Ahvaz": "محمود نوری",
+          "Mashhad": "امیر حسینی",
+          "Chabahar": "کریم بلوچی"
+        }
+      },
    
    
    
@@ -622,7 +711,7 @@ newprofile:{
     "signup": "ثبت‌نام",
     "readMore": "مطالعه بیشتر",
     "phone": "تلفن",
-    "address": "آدرس"
+    "address": "آدرس","home":'خانه'
   },
   "orders": {
     "pageTitle": "سفر های من",
@@ -633,6 +722,7 @@ newprofile:{
     "selectOrderType": "انتخاب کنید",
     "fromDate": "از",
     "toDate": "تا",
+    
     "paidAmount": "مبلغ پرداخت شده",
     "route": "مسیر",
     "dateTime": "تاریخ و ساعت",
@@ -644,8 +734,171 @@ newprofile:{
       "pending": "در انتظار",
       "cancelled": "لغو شده",
       "refunded": "عودت داده شده"
-    }
+    },
+    "title": "جزئیات سفارش",
+    "tripInfo": "اطلاعات سفر",
+    "origin": "مبدا",
+    "destination": "مقصد",
+    "company": "شرکت",
+    "vehicleType": "نوع وسیله نقلیه",
+    "departureDate": "تاریخ حرکت",
+    "departureTime": "ساعت حرکت",
+    "priceSummary": "خلاصه قیمت",
+    "pricePerTicket": "قیمت هر بلیط",
+    "passengerCount": "تعداد مسافر",
+    "passengerUnit": "نفر",
+    "seatsLeft": "صندلی‌های باقی‌مانده",
+    "seatUnit": "صندلی",
+    "totalAmount": "مبلغ کل",
+    "finalAmount": "مبلغ نهایی",
+    "selectSeat": "انتخاب صندلی",
+    "selectSeatDescription": "برای انتخاب روی صندلی‌های آزاد کلیک کنید. می‌توانید چندین صندلی انتخاب کنید.",
+    "frontOfBus": "جلو اتوبوس",
+    "aisle": "راهرو",
+    "selectedSeats": "صندلی‌های انتخاب شده",
+    "noSeatSelected": "هیچ صندلی انتخاب نشده",
+    "passengerInfo": "اطلاعات مسافران",
+    "passengers" : "مسافران",
+    "passengerNumber": "مسافر {{number}}",
+    "seat": "صندلی",
+    "confirmAndPay": "تأیید و پرداخت",
+    "submitting": "در حال ارسال...",
+    "back": "بازگشت",
+    "backToSearch": "بازگشت به جستجو",
+    "backToHome": "بازگشت به صفحه اصلی",
+    "termsText": "من مطالعه کرده‌ام و با ",
+    "termsLink": "قوانین و مقررات",
+    "privacyLink": "سیاست حفظ حریم خصوصی",
+    "and": "و",
+    "termsSuffix": " موافقم.",
+    "noSeatInfo": "اطلاعات صندلی موجود نیست",
+    "maxSeatsError": "می‌توانید حداکثر {{maxSeats}} صندلی انتخاب کنید",
+    "seatNotAvailable": "این صندلی در دسترس نیست",
+    "userNotFound": "اطلاعات کاربر یافت نشد. لطفاً ابتدا وارد شوید.",
+    "busInfoError": "خطا در بارگذاری اطلاعات اتوبوس",
+    "noBusSelected": "هیچ اتوبوسی انتخاب نشده است. لطفاً ابتدا یک اتوبوس انتخاب کنید.",
+    "busOrUserNotFound": "اطلاعات اتوبوس یا کاربر یافت نشد",
+    "busDetailsError": "خطا در بارگذاری جزئیات اتوبوس",
+    "incompleteInfo": "اطلاعات ناقص",
+    "reserveError": "خطا در رزرو",
+    "reserveSuccess": "رزرو با موفقیت انجام شد!",
+    "noPassengers": "لطفاً مسافران را اضافه کنید",
+    "invalidPassengerData": "لطفاً تمام اطلاعات مسافران را تکمیل کنید",
+    "paymentConfirmation": "تأیید پرداخت",
+    "paymentConfirmationDescription": "آیا مطمئن هستید که می‌خواهید پرداخت را ادامه دهید؟",
+    "paymentSummary": "خلاصه پرداخت",
+    "processing": "در حال پردازش",
+    "confirmPayment": "تأیید پرداخت",
+    "paymentProcessing": "در حال پردازش پرداخت",
+    "paymentSuccess": "پرداخت با موفقیت انجام شد"
   },
+"seat": {
+      "available": "آزاد",
+      "selected": "انتخاب شده",
+      "reserved": "رزرو شده",
+      "blocked": "مسدود",
+      "unknown": "نامشخص",
+      "maleReserved": "رزرو شده (مرد)",
+      "femaleReserved": "رزرو شده (زن)"
+    },
+    "form": {
+      "firstName": "نام",
+      "lastName": "نام خانوادگی",
+      "nationalId": "کد ملی",
+      "mobile": "شماره موبایل",
+      "birthDate": "تاریخ تولد",
+      "gender": "جنسیت",
+      "select": "انتخاب کنید",
+      "male": "مرد",
+      "female": "زن"
+    },
+    "validation": {
+      "firstNameRequired": "نام الزامی است",
+      "firstNameMinLength": "نام باید حداقل ۲ کاراکتر باشد",
+      "lastNameRequired": "نام خانوادگی الزامی است",
+      "lastNameMinLength": "نام خانوادگی باید حداقل ۲ کاراکتر باشد",
+      "genderRequired": "جنسیت الزامی است",
+      "nationalIdRequired": "کد ملی الزامی است",
+      "nationalIdInvalid": "کد ملی معتبر نیست",
+      "mobileRequired": "شماره موبایل الزامی است",
+      "mobileInvalid": "شماره موبایل معتبر نیست",
+      "birthDateRequired": "تاریخ تولد الزامی است",
+      "seatNumberRequired": "شماره صندلی الزامی است",
+      "minPassengers": "حداقل یک مسافر الزامی است",
+      "termsRequired": "پذیرش قوانین الزامی است"
+    },
+   
+    "steps": {
+      "selectFlight": "انتخاب پرواز",
+      "passengerDetails": "اطلاعات مسافر",
+      "confirmInfo": "تأیید اطلاعات",
+      "payment": "پرداخت",
+      "ticketIssuance": "صدور بلیط"
+    },
+
+    // "confirmation": {
+    //   "title": "تأیید سفارش",
+    //   "noBookingData": "اطلاعات سفارش یافت نشد. لطفاً مجدداً از ابتدا شروع کنید.",
+    //   "noPassengers": "اطلاعات مسافر یافت نشد",
+    //   "ticketInfo": {
+    //     "title": "اطلاعات بلیط",
+    //     "origin": "مبدا",
+    //     "destination": "مقصد",
+    //     "originLabel": "مبدا",
+    //     "destinationLabel": "مقصد",
+    //     "airlineLabel": "شرکت حمل‌ونقل",
+    //     "airline": "شرکت",
+    //     "dateTimeLabel": "تاریخ و ساعت حرکت",
+    //     "dateTime": "تاریخ و ساعت",
+    //     "flightNumberLabel": "شماره پرواز",
+    //     "flightNumber": "شماره",
+    //     "flightClassLabel": "کلاس پرواز",
+    //     "flightClass": "کلاس",
+    //     "baggageAllowanceLabel": "مجوز بار",
+    //     "baggageAllowance": "بار مجاز",
+    //     "selectedSeats": "صندلی‌های انتخاب شده"
+    //   },
+    //   "passengers": {
+    //     "title": "اطلاعات مسافران",
+    //     "ageGroup": "گروه سنی",
+    //     "fullName": "نام و نام خانوادگی",
+    //     "gender": "جنسیت",
+    //     "nationalId": "کد ملی",
+    //     "birthDate": "تاریخ تولد",
+    //     "nationality": "ملیت",
+    //     "seatNumber": "شماره صندلی",
+    //     "seat": "صندلی",
+    //     "adult": "بزرگسال",
+    //     "child": "کودک",
+    //     "infant": "نوزاد",
+    //     "male": "مرد",
+    //     "female": "زن",
+    //     "iranian": "ایرانی"
+    //   },
+    //   "notification": {
+    //     "title": "اطلاعات سفر",
+    //     "description": "اطلاعات بلیط و جزئیات سفر به شماره موبایل و ایمیل شما ارسال خواهد شد. لطفاً از صحت اطلاعات تماس اطمینان حاصل کنید.",
+    //     "email": "ایمیل",
+    //     "phone": "تلفن",
+    //     "noEmail": "ایمیل وارد نشده است"
+    //   },
+    //   "discount": {
+    //     "title": "تخفیف",
+    //     "clickToEnter": "برای وارد کردن کد تخفیف کلیک کنید",
+    //     "instructions": "در صورت داشتن کد تخفیف، آن را در قسمت زیر وارد کنید.",
+    //     "placeholder": "کد تخفیف را وارد کنید",
+    //     "apply": "اعمال",
+    //     "appliedSuccess": "تخفیف با موفقیت اعمال شد",
+    //     "applied": "تخفیف اعمال شده است"
+    //   },
+    //   "contactInfo": {
+    //     "phone": "شماره تلفن"
+    //   },
+    //   // "noPassengers": "مسافری یافت نشد"
+    // },
+
+
+
   "orderDetails": {
     "orderNumber": "شماره سفارش",
     "serviceType": "نوع سفر",
@@ -793,6 +1046,9 @@ newprofile:{
     }
   },
   "confirmation": {
+    "title": "تأیید سفارش",
+    "noBookingData": "اطلاعات سفارش یافت نشد. لطفاً مجدداً از ابتدا شروع کنید.",
+    "noPassengers": "اطلاعات مسافر یافت نشد",
     "ticketInfo": {
       "title": "اطلاعات بلیط",
       "originLabel": "مبدا",
@@ -800,7 +1056,7 @@ newprofile:{
       "airlineLabel": "شرکت ",
       "dateTimeLabel": "تاریخ و ساعت حرکت",
       "flightNumberLabel": "شماره ",
-      "flightClassLabel": "کلاس ",
+      "flightClassLabel": "جزییات ",
       "baggageAllowanceLabel": "مقدار بار مجاز",
       "origin": "تهران",
       "destination": "مشهد",
@@ -808,7 +1064,8 @@ newprofile:{
       "dateTime": "دوشنبه ۱۵ مرداد - ۲۲:۳۰",
       "flightNumber": "HH ۱۲۳۴",
       "flightClass": "اکونومی",
-      "baggageAllowance": "20 کیلوگرم"
+      "baggageAllowance": "20 کیلوگرم",
+      "selectedSeats": "صندلی‌های انتخاب شده"
     },
     "passengers": {
       "title": "مشخصات مسافران",
@@ -816,6 +1073,7 @@ newprofile:{
       "fullName": "نام و نام خانوادگی",
       "gender": "جنسیت",
       "nationalId": "کدملی",
+      "seatNumber": "شماره صندلی",
       "birthDate": "تاریخ تولد",
       "nationality": "ملیت",
       "adult": "بزرگسال",
@@ -823,7 +1081,11 @@ newprofile:{
       "male": "مرد",
       "sampleNationalId": "۰۱۲۳۴۵۶۷۸۹",
       "sampleBirthDate": "۱۳۰۰/۰۱/۰۱",
-      "iranian": "ایران"
+      "iranian": "ایران",
+      "seat": "صندلی",
+      "child": "کودک",
+      "infant": "نوزاد",
+      "female": "زن",
     },
     "travelServices": {
       "title": "خدمات سفر",
@@ -834,7 +1096,8 @@ newprofile:{
       "title": "اطلاع رسانی سفر",
       "description": "اطلاعات بلیط و اطلاع‌رسانی بعدی به این ادرس ارسال می‌شود.",
       "email": "ایمیل",
-      "phone": "شماره موبایل"
+      "phone": "شماره موبایل",
+      "noEmail": "ایمیل وارد نشده است"
     },
     "contactInfo": {
       "email": "...",
@@ -846,7 +1109,8 @@ newprofile:{
       "instructions": "کد تخفیف خود را در بخش زیر وارد کنید و دکمه ثبت را بزنید.",
       "placeholder": "کد تخفیف",
       "apply": "ثبت",
-      "appliedSuccess": "کد تخفیف با موفقیت اعمال شد"
+      "appliedSuccess": "کد تخفیف با موفقیت اعمال شد",
+      "applied": "تخفیف اعمال شده است"
     },
     "payment": {
       "payableAmount": "مبلغ قابل پرداخت",
@@ -985,7 +1249,9 @@ newprofile:{
       "children": "کودک (۲ تا ۱۲ سال)", 
       "infants": "نوزاد (۱۰ روز تا ۲ سال)",
       "search": "جستجو",
-      "person" : "مسافران"
+      "person" : "مسافران",
+      "loading":'باگزاری'
+     
 
     },
     "cities": {
@@ -1107,7 +1373,8 @@ newprofile:{
       "adults": "بزرگسال (۱۲ سال به بالا)",
       "children": "کودک (۲ تا ۱۲ سال)", 
       "infants": "نوزاد (۱۰ روز تا ۲ سال)",
-      "search": "جستجو"
+      "search": "جستجو",
+      "loading":'باگزاری'
     },
     "cities": {
       "tehran": "تهران",
@@ -1231,7 +1498,36 @@ newprofile:{
     "contact": "تماس با ما",
     "stations": "ایستگاه ها",
     "bookedTickets": "بلیط های رزرو شده",
-    "userMenu": "منو کاربری"
+    "userMenu": "منو کاربری",
+      "bus": "اتوبوس",
+      "taxi": "تاکسی",
+      "van": "ون",
+      "cargo": "باربری",
+      "branches": "شعبه‌ها",
+      "reservedTickets": "بلیط‌های رزرو شده",
+      "toggleTheme": "تغییر تم",
+      "signIn": "ورود / ثبت‌نام",
+      "menu": "منو",
+    
+      "myTickets": "بلیط‌های من",
+      "myOrders": "سفارش‌های من",
+      
+      "profile": "پروفایل",
+      "logout": "خروج",
+      "welcome": "خوش آمدید",
+      "changeLanguage": "تغییر زبان",
+      "selectLanguage": "انتخاب زبان",
+    
+  },
+  "signin": {
+    "title": "ورود | ثبت‌نام",
+    "subtitle": "به پرتو سیر خوش آمدید",
+    "description": "برای ورود یا ثبت‌نام شماره موبایل خود را وارد کنید",
+    "phoneNumber": "شماره موبایل",
+    "terms": "با ورود و یا ثبت نام در پرتو سیر",
+    "termsLink": "شرایط و قوانین",
+    "submit": "ارسال کد تایید",
+    "passwordLogin": "ورود با رمز عبور"
   },
   "booking": {
     "oneWay": "یک طرفه",
@@ -1440,7 +1736,14 @@ newprofile:{
     "terms": "قوانین و مقررات",
     "corporateSales": "فروش سازمانی",
     "agencyCooperation": "همکاری با آژانس ها",
-    "designCredit": "طراحی سایت » گروه نرم افزاری تمشک «"
+    "designCredit": "طراحی سایت » گروه نرم افزاری تمشک «",
+    "contact": "تماس با ما",
+    "refund": "شرایط استرداد",
+    "corporate": "همکاری سازمانی",
+    "agency": "همکاری با آژانس‌ها",
+    "company": "شرکت",
+    "services": "خدمات",
+    "additional": "بیشتر"
   },
   "auth": {
     "loginSignup": "ورود یا ثبت‌نام",
@@ -1597,6 +1900,20 @@ newprofile:{
         "passengers": "مسافر",
         "editSearch": "ویرایش جستجو"
       },
+        "dateSlider": {
+          "today": "امروز",
+          "select": "انتخاب",
+          "past": "گذشته",
+          "loading": "در حال بارگذاری تاریخ‌ها...",
+          "noDates": "تاریخ موجود نیست",
+          "morning": "صبح",
+          "afternoon": "ظهر",
+          "evening": "عصر",
+          "night": "شب",
+          "weekend": "آخر هفته",
+          "weekday": "روز کاری"
+        },
+      
       "filters": {
         "title": "فیلترها",
         "clearAll": "لغو فیلتر ها",
@@ -3056,7 +3373,7 @@ newprofile:{
       }
     }
   },
-  lng: "en", // زبان پیش‌فرض
+  lng: "fa", // زبان پیش‌فرض
   fallbackLng: "fa",
   interpolation: {
     escapeValue: false
